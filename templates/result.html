@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriScope – Scan Result</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #0f172a;
+            --card2: #1e293b;
+            --border: #1e293b;
+            --green: #10b981;
+            --red: #ef4444;
+            --amber: #f59e0b;
+            --blue: #3b82f6;
+            --cyan: #06b6d4;
+            --text: #f1f5f9;
+            --muted: #64748b;
+            --sub: #94a3b8;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+        }
+
+        /* NAV */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 40px; background: rgba(2,6,23,0.9);
+            backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; color: var(--text); text-decoration: none; }
+        .brand i { color: var(--blue); }
+        .nav-links { display: flex; gap: 8px; }
+        .nav-links a {
+            text-decoration: none; color: var(--muted); font-size: 14px;
+            padding: 8px 16px; border-radius: 8px; transition: 0.2s; font-weight: 500;
+        }
+        .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+        .nav-links a.active { color: var(--blue); }
+
+        /* LAYOUT */
+        .page { max-width: 860px; margin: 0 auto; padding: 36px 20px 60px; }
+
+        /* VERDICT BANNER */
+        .verdict-banner {
+            border-radius: 16px; padding: 28px 32px; margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            border: 1px solid; position: relative; overflow: hidden;
+        }
+        .verdict-banner::before {
+            content: ''; position: absolute; inset: 0;
+            opacity: 0.06; pointer-events: none;
+        }
+        .verdict-safe   { border-color: rgba(16,185,129,0.4); background: rgba(16,185,129,0.08); }
+        .verdict-phishing { border-color: rgba(239,68,68,0.4); background: rgba(239,68,68,0.08); }
+        .verdict-unverified { border-color: rgba(245,158,11,0.4); background: rgba(245,158,11,0.08); }
+        .verdict-invalid { border-color: rgba(100,116,139,0.4); background: rgba(100,116,139,0.08); }
+
+        .verdict-left { display: flex; align-items: center; gap: 20px; }
+        .verdict-icon {
+            width: 60px; height: 60px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 26px;
+            flex-shrink: 0;
+        }
+        .icon-safe     { background: rgba(16,185,129,0.15); color: var(--green); }
+        .icon-phishing { background: rgba(239,68,68,0.15); color: var(--red); }
+        .icon-amber    { background: rgba(245,158,11,0.15); color: var(--amber); }
+        .icon-gray     { background: rgba(100,116,139,0.15); color: var(--muted); }
+
+        .verdict-title { font-size: 26px; font-weight: 800; line-height: 1; margin-bottom: 6px; }
+        .verdict-msg   { font-size: 14px; color: var(--sub); line-height: 1.5; max-width: 480px; }
+        .verdict-badge {
+            padding: 8px 18px; border-radius: 50px; font-size: 13px;
+            font-weight: 700; letter-spacing: 0.5px; flex-shrink: 0;
+        }
+        .badge-safe     { background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); }
+        .badge-phishing { background: rgba(239,68,68,0.15); color: var(--red); border: 1px solid rgba(239,68,68,0.3); }
+        .badge-amber    { background: rgba(245,158,11,0.15); color: var(--amber); border: 1px solid rgba(245,158,11,0.3); }
+
+        /* SUGGESTION BOX */
+        .suggestion-box {
+            background: rgba(251,191,36,0.07); border: 1px solid rgba(251,191,36,0.35);
+            border-radius: 12px; padding: 16px 22px; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 14px;
+        }
+        .suggestion-box i { color: #fbbf24; font-size: 18px; flex-shrink: 0; }
+        .suggestion-box .sug-text { font-size: 14px; color: var(--sub); line-height: 1.5; }
+        .suggestion-box .sug-text strong { color: var(--text); }
+        .suggestion-box a {
+            color: #60a5fa; font-weight: 700; text-decoration: none;
+            border-bottom: 1px dashed rgba(96,165,250,0.4); transition: 0.2s;
+        }
+        .suggestion-box a:hover { color: #93c5fd; border-bottom-color: #93c5fd; }
+
+        /* THREAT GAUGE */
+        .gauge-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 24px 28px; margin-bottom: 20px;
+        }
+        .gauge-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .gauge-label { font-size: 15px; font-weight: 600; color: var(--text); }
+        .gauge-score { font-size: 28px; font-weight: 800; }
+        .gauge-track {
+            height: 12px; background: rgba(255,255,255,0.07);
+            border-radius: 6px; overflow: hidden; margin-bottom: 10px; position: relative;
+        }
+        .gauge-fill { height: 100%; border-radius: 6px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); width: 0; }
+        .gauge-ticks { display: flex; justify-content: space-between; }
+        .gauge-ticks span { font-size: 11px; color: var(--muted); }
+
+        /* FORENSIC GRID */
+        .forensic-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 14px; margin-bottom: 20px;
+        }
+        .forensic-card {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 18px 20px;
+        }
+        .forensic-card .fc-icon { font-size: 16px; color: var(--muted); margin-bottom: 10px; }
+        .forensic-card .fc-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 6px; }
+        .forensic-card .fc-value { font-size: 16px; font-weight: 700; color: var(--text); word-break: break-all; }
+        .fc-online { color: var(--green) !important; }
+        .fc-offline { color: var(--red) !important; }
+        .fc-https   { color: var(--green) !important; }
+        .fc-http    { color: var(--amber) !important; }
+
+        /* RISK FACTORS */
+        .risk-section {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 16px; padding: 22px 24px; margin-bottom: 20px;
+        }
+        .risk-title { font-size: 15px; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+        .risk-title i { color: var(--red); }
+        .risk-item {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .risk-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .risk-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 6px; }
+        .risk-item p { font-size: 14px; color: var(--sub); line-height: 1.5; }
+        .risk-item p strong { color: var(--text); display: block; margin-bottom: 2px; }
+
+        /* ACTION BUTTONS */
+        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+        .btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            padding: 16px; border-radius: 12px; font-size: 15px; font-weight: 700;
+            text-decoration: none; cursor: pointer; border: none;
+            transition: 0.2s; font-family: inherit;
+        }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--sub); }
+        .btn-outline:hover { border-color: var(--blue); color: var(--text); }
+        .btn-green { background: var(--green); color: #000; }
+        .btn-green:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-red { background: var(--red); color: #fff; }
+        .btn-red:hover { filter: brightness(1.1); transform: translateY(-1px); }
+        .btn-blue { background: var(--blue); color: #fff; }
+        .btn-blue:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        /* LOGIN NUDGE */
+        .login-nudge {
+            background: rgba(59,130,246,0.06); border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 12px; padding: 16px 22px; display: flex;
+            align-items: center; justify-content: space-between; gap: 16px;
+        }
+        .login-nudge p { font-size: 14px; color: var(--sub); }
+        .login-nudge a { color: #60a5fa; font-weight: 600; text-decoration: none; }
+        .login-nudge a:hover { color: #93c5fd; }
+
+        @media (max-width: 600px) {
+            .forensic-grid, .actions { grid-template-columns: 1fr; }
+            .verdict-banner { flex-direction: column; align-items: flex-start; gap: 16px; }
+            .navbar { padding: 14px 20px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="brand"><i class="fas fa-shield-alt"></i> VeriScope AI</a>
+    <div class="nav-links">
+        {% if session.get('user') %}
+            <a href="/dashboard">Dashboard</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        {% endif %}
+    </div>
+</nav>
+
+<div class="page">
+{% if result %}
+
+    {% set st = result.status | lower %}
+    {% set is_safe     = result.status == 'SAFE' %}
+    {% set is_phishing = result.status == 'PHISHING' %}
+    {% set is_unverified = result.status == 'UNVERIFIED' %}
+
+    <!-- VERDICT BANNER -->
+    <div class="verdict-banner
+        {% if is_safe %}verdict-safe
+        {% elif is_phishing %}verdict-phishing
+        {% elif is_unverified %}verdict-unverified
+        {% else %}verdict-invalid{% endif %}">
+
+        <div class="verdict-left">
+            <div class="verdict-icon
+                {% if is_safe %}icon-safe
+                {% elif is_phishing %}icon-phishing
+                {% else %}icon-amber{% endif %}">
+                {% if is_safe %}<i class="fas fa-check-shield"></i>
+                {% elif is_phishing %}<i class="fas fa-skull-crossbones"></i>
+                {% else %}<i class="fas fa-exclamation-triangle"></i>{% endif %}
+            </div>
+            <div>
+                <div class="verdict-title" style="color:
+                    {% if is_safe %}#10b981{% elif is_phishing %}#ef4444{% else %}#f59e0b{% endif %}">
+                    {% if is_safe %}SAFE{% elif is_phishing %}PHISHING{% elif is_unverified %}UNVERIFIED{% else %}INVALID{% endif %}
+                </div>
+                <div class="verdict-msg">
+                    <strong style="color:var(--text)">{{ result.domain }}</strong><br>
+                    {{ result.message }}
+                </div>
+            </div>
+        </div>
+
+        <div class="verdict-badge
+            {% if is_safe %}badge-safe{% elif is_phishing %}badge-phishing{% else %}badge-amber{% endif %}">
+            {% if is_safe %}✓ VERIFIED SAFE{% elif is_phishing %}⚠ THREAT DETECTED{% elif is_unverified %}? PROCEED WITH CAUTION{% else %}✕ INVALID URL{% endif %}
+        </div>
+    </div>
+
+    <!-- TYPOSQUATTING SUGGESTION -->
+    {% if result.suggestion %}
+    <div class="suggestion-box">
+        <i class="fas fa-lightbulb"></i>
+        <div class="sug-text">
+            <strong>Did you mean to visit:</strong>
+            <a href="https://{{ result.suggestion }}" target="_blank" rel="noopener">
+                {{ result.suggestion }} <i class="fas fa-external-link-alt" style="font-size:11px"></i>
+            </a>?
+            The website you entered looks like an imitation of this legitimate site.
+            Click the link above to go to the real site safely.
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- THREAT GAUGE (for non-safe) -->
+    {% if not is_safe %}
+    <div class="gauge-section">
+        <div class="gauge-header">
+            <span class="gauge-label"><i class="fas fa-tachometer-alt" style="color:var(--muted);margin-right:8px"></i>Threat Score</span>
+            <span class="gauge-score" style="color:
+                {% if result.threat_score >= 70 %}var(--red)
+                {% elif result.threat_score >= 30 %}var(--amber)
+                {% else %}var(--green){% endif %}">
+                {{ result.threat_score }}<span style="font-size:16px;color:var(--muted)">/100</span>
+            </span>
+        </div>
+        <div class="gauge-track">
+            <div class="gauge-fill" id="gaugeFill"
+                style="background: {% if result.threat_score >= 70 %}linear-gradient(90deg,#f97316,#ef4444){% elif result.threat_score >= 30 %}linear-gradient(90deg,#fbbf24,#f59e0b){% else %}linear-gradient(90deg,#34d399,#10b981){% endif %}">
+            </div>
+        </div>
+        <div class="gauge-ticks">
+            <span>Safe (0–30)</span>
+            <span>Caution (30–70)</span>
+            <span>Danger (70–100)</span>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- FORENSIC DETAIL CARDS -->
+    <div class="forensic-grid">
+        <div class="forensic-card">
+            <div class="fc-icon"><i class="far fa-calendar-alt"></i></div>
+            <span class="fc-label">Domain Age</span>
+            <div class="fc-value">{{ result.age if result.age else 'Unknown' }}</div>
+        </div>
+        <div class="forensic-card">
+            <div class="fc-icon"><i class="fas fa-server"></i></div>
+            <span class="fc-label">Server IP Address</span>
+            <div class="fc-value">{{ result.ip if result.ip else 'Hidden' }}</div>
+        </div>
+        <div class="forensic-card">
+            <div class="fc-icon"><i class="fas fa-wifi"></i></div>
+            <span class="fc-label">Website Status</span>
+            <div class="fc-value
+                {% if result.website_status and 'Online' in result.website_status %}fc-online
+                {% else %}fc-offline{% endif %}">
+                {% if result.website_status %}
+                    {% if 'Online' in result.website_status %}<i class="fas fa-circle" style="font-size:9px;margin-right:6px"></i>{% endif %}
+                    {{ result.website_status }}
+                {% else %}Unknown{% endif %}
+            </div>
+        </div>
+        <div class="forensic-card">
+            <div class="fc-icon"><i class="fas fa-lock"></i></div>
+            <span class="fc-label">SSL / HTTPS</span>
+            <div class="fc-value
+                {% if result.website_status and 'HTTPS' in result.website_status %}fc-https
+                {% else %}fc-http{% endif %}">
+                {% if result.website_status and 'HTTPS' in result.website_status %}
+                    <i class="fas fa-lock" style="font-size:13px;margin-right:6px"></i>Secure (HTTPS)
+                {% elif result.website_status and 'HTTP' in result.website_status %}
+                    <i class="fas fa-lock-open" style="font-size:13px;margin-right:6px"></i>HTTP Only
+                {% else %}
+                    Not Verified
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- RISK FACTORS -->
+    <div class="risk-section">
+        <div class="risk-title">
+            <i class="fas fa-search"></i>
+            {% if is_safe %}Analysis Summary{% else %}Risk Factors Detected{% endif %}
+        </div>
+
+        {% if is_safe %}
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--green)"></div>
+            <p><strong>Domain Verified</strong>{{ result.message }}</p>
+        </div>
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--green)"></div>
+            <p><strong>No Threats Found</strong>This domain passed all phishing, typosquatting, homograph, and brand impersonation checks.</p>
+        </div>
+        {% elif is_phishing %}
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--red)"></div>
+            <p><strong>Primary Detection Signal</strong>{{ result.message }}</p>
+        </div>
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--red)"></div>
+            <p><strong>Threat Score: {{ result.threat_score }}/100</strong>High threat confidence — do not enter personal information on this site.</p>
+        </div>
+        {% if result.suggestion %}
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--amber)"></div>
+            <p><strong>Lookalike Domain Detected</strong>This URL closely imitates <a href="https://{{ result.suggestion }}" target="_blank" style="color:#60a5fa;text-decoration:none">{{ result.suggestion }}</a>. Verify the URL carefully before proceeding.</p>
+        </div>
+        {% endif %}
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--muted)"></div>
+            <p><strong>Recommended Action</strong>Close this page immediately. Do not enter passwords, payment details, or personal information.</p>
+        </div>
+        {% else %}
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--amber)"></div>
+            <p><strong>Unrecognised Domain</strong>{{ result.message }}</p>
+        </div>
+        <div class="risk-item">
+            <div class="risk-dot" style="background:var(--muted)"></div>
+            <p><strong>Recommended Action</strong>Verify the website identity through other means before sharing sensitive information.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- ACTION BUTTONS -->
+    <div class="actions">
+        <a href="/" class="btn btn-outline"><i class="fas fa-search"></i> Scan Another URL</a>
+
+        {% if is_safe %}
+            <a href="https://{{ result.domain }}" target="_blank" class="btn btn-green">
+                <i class="fas fa-external-link-alt"></i> Visit Site
+            </a>
+        {% elif is_phishing %}
+            {% if session.get('user') and result.id %}
+                <a href="/download_enhanced_report/{{ result.id }}" class="btn btn-red">
+                    <i class="fas fa-download"></i> Download PDF Report
+                </a>
+            {% else %}
+                <a href="/login" class="btn btn-blue">
+                    <i class="fas fa-sign-in-alt"></i> Login to Download Report
+                </a>
+            {% endif %}
+        {% else %}
+            <a href="/learn-more" class="btn btn-outline"><i class="fas fa-info-circle"></i> How to Stay Safe</a>
+        {% endif %}
+    </div>
+
+    <!-- LOGIN NUDGE (for anonymous users) -->
+    {% if not session.get('user') %}
+    <div class="login-nudge">
+        <p><i class="fas fa-history" style="margin-right:6px;color:var(--blue)"></i>
+        Want to save your scan history and download PDF forensic reports?</p>
+        <a href="/login">Login →</a>
+    </div>
+    {% endif %}
+
+{% else %}
+    <p style="text-align:center;color:var(--muted);margin-top:60px">No result found. <a href="/" style="color:var(--blue)">Go back</a></p>
+{% endif %}
+</div>
+
+<script>
+    // Animate the threat gauge fill on page load
+    window.addEventListener('load', function() {
+        const fill = document.getElementById('gaugeFill');
+        if (fill) {
+            setTimeout(function() {
+                fill.style.width = '{{ result.threat_score if result else 0 }}%';
+            }, 200);
+        }
+    });
+</script>
+</body>
+</html>

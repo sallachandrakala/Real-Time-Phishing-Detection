@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriScope AI - New Scan</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #05080f;
+            --card-bg: #111625;
+            --primary-green: #00dc82;
+            --danger-red: #ff4b4b;
+            --warning: #f59e0b;
+            --text-main: #ffffff;
+            --text-sub: #94a3b8;
+            --border-color: #1e293b;
+            --shadow: rgba(0, 0, 0, 0.4);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .navbar {
+            width: 100%;
+            padding: 20px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .brand {
+            font-size: 22px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-green), #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .nav-links a {
+            color: var(--text-sub);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+        
+        .nav-links a.active {
+            background: rgba(0, 220, 130, 0.1);
+            color: var(--primary-green);
+        }
+        
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            width: 100%;
+        }
+        
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-green), #6366f1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .page-header p {
+            color: var(--text-sub);
+            font-size: 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .scan-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .scan-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+        
+        .scan-card.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-title i {
+            color: var(--primary-green);
+        }
+        
+        .scan-input-container {
+            position: relative;
+        }
+        
+        .scan-input {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-main);
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .scan-input:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(0, 220, 130, 0.1);
+        }
+        
+        .scan-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary-green), #00b869);
+            color: black;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 220, 130, 0.3);
+        }
+        
+        .scan-btn:active {
+            transform: translateY(0);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            border-color: var(--primary-green);
+            transform: translateY(-3px);
+        }
+        
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 220, 130, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 24px;
+            color: var(--primary-green);
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            color: var(--text-sub);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .scan-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .scan-type {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .scan-type:hover {
+            border-color: var(--primary-green);
+            background: rgba(0, 220, 130, 0.05);
+        }
+        
+        .scan-type.active {
+            border-color: var(--primary-green);
+            background: rgba(0, 220, 130, 0.1);
+        }
+        
+        .scan-type-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .scan-type-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .scan-type-icon.deep {
+            background: rgba(99, 102, 241, 0.1);
+            color: #6366f1;
+        }
+        
+        .scan-type-icon.quick {
+            background: rgba(0, 220, 130, 0.1);
+            color: var(--primary-green);
+        }
+        
+        .scan-type-icon.api {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        .scan-type-title {
+            font-weight: 600;
+            font-size: 18px;
+        }
+        
+        .scan-type-desc {
+            color: var(--text-sub);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .scan-type-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(0, 220, 130, 0.1);
+            color: var(--primary-green);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+        
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger-red);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .loader {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 8, 15, 0.95);
+            z-index: 9999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .loader.active {
+            display: flex;
+        }
+        
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid var(--primary-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        .loader-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary-green);
+        }
+        
+        .loader-steps {
+            color: var(--text-sub);
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .scan-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .page-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="brand">
+            <i class="fas fa-shield-alt"></i>
+            <span>VeriScope AI</span>
+        </div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/scan" class="active">New Scan</a>
+            <a href="/history">History</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1>Advanced Threat Analysis</h1>
+            <p>Comprehensive security scanning with AI-powered threat detection, blacklist monitoring, and real-time intelligence</p>
+        </div>
+
+        <!-- Error Message -->
+        {% if error %}
+        <div class="error-message">
+            <i class="fas fa-exclamation-triangle"></i>
+            <span>{{ error }}</span>
+        </div>
+        {% endif %}
+
+        <!-- Scan Container -->
+        <div class="scan-container">
+            <!-- URL Input Card -->
+            <div class="scan-card full-width">
+                <div class="card-title">
+                    <i class="fas fa-link"></i>
+                    <span>URL Analysis</span>
+                </div>
+                
+                <form id="scanForm" method="POST" action="/scan">
+                    <div class="scan-input-container">
+                        <input type="text" 
+                               name="url" 
+                               class="scan-input" 
+                               placeholder="https://example.com or example.com"
+                               required
+                               value="{{ request.form.url if request.form.url else '' }}">
+                    </div>
+                    
+                    <div class="scan-types">
+                        <div class="scan-type active" onclick="selectScanType('quick')">
+                            <div class="scan-type-header">
+                                <div class="scan-type-icon quick">
+                                    <i class="fas fa-bolt"></i>
+                                </div>
+                                <div>
+                                    <div class="scan-type-title">Quick Scan</div>
+                                    <div class="scan-type-desc">
+                                        Fast analysis with basic threat detection. Suitable for quick checks.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scan-type-badge">≈ 5-10 seconds</div>
+                        </div>
+                        
+                        <div class="scan-type" onclick="selectScanType('deep')">
+                            <div class="scan-type-header">
+                                <div class="scan-type-icon deep">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <div>
+                                    <div class="scan-type-title">Deep Scan</div>
+                                    <div class="scan-type-desc">
+                                        Comprehensive analysis with external API checks and detailed reporting.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scan-type-badge">≈ 20-30 seconds</div>
+                        </div>
+                        
+                        <div class="scan-type" onclick="selectScanType('api')">
+                            <div class="scan-type-header">
+                                <div class="scan-type-icon api">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div>
+                                    <div class="scan-type-title">API Scan</div>
+                                    <div class="scan-type-desc">
+                                        Programmatic analysis via REST API with JSON response.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scan-type-badge">Programmatic Access</div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="scanType" name="scan_type" value="quick">
+                    
+                    <button type="submit" class="scan-btn" onclick="showLoader()">
+                        <i class="fas fa-play"></i>
+                        <span>Start Security Scan</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Features Card -->
+            <div class="scan-card">
+                <div class="card-title">
+                    <i class="fas fa-star"></i>
+                    <span>What We Check</span>
+                </div>
+                
+                <div class="features-grid">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-title">Phishing Detection</div>
+                        <div class="feature-desc">AI-powered pattern recognition for phishing attempts</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <div class="feature-title">Malware Analysis</div>
+                        <div class="feature-desc">Check for malicious code and scripts</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <div class="feature-title">Blacklist Monitoring</div>
+                        <div class="feature-desc">Verify against known threat databases</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="feature-title">SSL/TLS Analysis</div>
+                        <div class="feature-desc">Certificate validation and encryption check</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-secret"></i>
+                        </div>
+                        <div class="feature-title">Privacy Analysis</div>
+                        <div class="feature-desc">Data collection and tracking detection</div>
+                    </div>
+                    
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <div class="feature-title">Historical Data</div>
+                        <div class="feature-desc">Domain age and reputation analysis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Tips Card -->
+            <div class="scan-card">
+                <div class="card-title">
+                    <i class="fas fa-lightbulb"></i>
+                    <span>Quick Tips</span>
+                </div>
+                
+                <div style="color: var(--text-sub); line-height: 1.8;">
+                    <p>🔒 Always check for HTTPS before entering sensitive information</p>
+                    <p>👁️ Look for typos in domain names (gooogle.com vs google.com)</p>
+                    <p>📧 Be cautious of URLs received via email or messaging apps</p>
+                    <p>🔍 Use our AI scanner for suspicious-looking links</p>
+                    <p>📊 Check domain age - new domains are riskier</p>
+                </div>
+                
+                <div style="margin-top: 25px; padding: 15px; background: rgba(0, 220, 130, 0.05); border-radius: 10px;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <i class="fas fa-robot" style="color: var(--primary-green);"></i>
+                        <span style="font-weight: 600;">AI-Powered Analysis</span>
+                    </div>
+                    <p style="color: var(--text-sub); font-size: 14px;">
+                        Our machine learning model analyzes millions of URLs to detect sophisticated threats that traditional methods might miss.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Initializing Security Scan</div>
+        <div class="loader-steps" id="loaderSteps">
+            <div>▶ Resolving DNS...</div>
+            <div>▶ Checking SSL Certificate...</div>
+            <div>▶ Analyzing URL Structure...</div>
+            <div>▶ Querying Threat Intelligence...</div>
+            <div>▶ Generating Report...</div>
+        </div>
+    </div>
+
+    <script>
+        function selectScanType(type) {
+            // Update UI
+            document.querySelectorAll('.scan-type').forEach(el => {
+                el.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update hidden input
+            document.getElementById('scanType').value = type;
+        }
+        
+        function showLoader() {
+            const loader = document.getElementById('loader');
+            const steps = document.getElementById('loaderSteps').children;
+            let currentStep = 0;
+            
+            loader.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Animate steps
+            const interval = setInterval(() => {
+                if (currentStep < steps.length) {
+                    // Mark current step as active
+                    for (let i = 0; i < steps.length; i++) {
+                        steps[i].style.color = i === currentStep ? 
+                            'var(--primary-green)' : 'var(--text-sub)';
+                        steps[i].style.fontWeight = i === currentStep ? '600' : '400';
+                    }
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, 800);
+        }
+        
+        // Auto-hide loader if form submission fails
+        window.addEventListener('pageshow', function() {
+            document.getElementById('loader').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Example URLs for quick testing
+        const exampleUrls = [
+            'google.com',
+            'facebook.com',
+            'github.com',
+            'paypal.com',
+            'example.com'
+        ];
+        
+        // Set random example URL on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const input = document.querySelector('.scan-input');
+            if (!input.value) {
+                const randomUrl = exampleUrls[Math.floor(Math.random() * exampleUrls.length)];
+                input.placeholder = `e.g., ${randomUrl}`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>VeriScope AI | History</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0b1120;
+            --bg-panel: #1e293b;
+            --primary: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* SIDEBAR */
+        .sidebar { width: 260px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid var(--border); display: flex; flex-direction: column; position: fixed; height: 100vh; z-index: 100; }
+        .logo-area { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; font-weight: 700; font-size: 20px; }
+        .nav-menu { padding: 24px 16px; flex: 1; }
+        .nav-label { font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin: 12px 0 12px 12px; }
+        
+        /* NAV LINK with PULSE ANIMATION */
+        .nav-link { display: flex; align-items: center; gap: 12px; padding: 14px; color: var(--text-muted); text-decoration: none; border-radius: 10px; margin-bottom: 4px; font-weight: 500; transition: 0.3s; }
+        .nav-link:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateX(5px); }
+        
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.15), transparent);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+            /* Glowing Pulse Effect */
+            animation: pulse-blue 2s infinite;
+        }
+
+        /* MAIN CONTENT */
+        .main-content { flex: 1; margin-left: 260px; padding: 32px; }
+
+        /* HEADER */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; }
+        .page-title h2 { margin: 0; font-size: 24px; font-weight: 700; }
+        .page-title p { margin: 4px 0 0; color: var(--text-muted); font-size: 14px; }
+        .user-profile { display: flex; align-items: center; gap: 12px; background: var(--bg-panel); padding: 8px 16px; border-radius: 50px; border: 1px solid var(--border); }
+
+        /* HISTORY TABLE CARD (GLAM EFFECT) */
+        .card { 
+            background: var(--bg-panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s;
+        }
+        
+        /* Hover Lift Effect */
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        table { width: 100%; border-collapse: collapse; }
+        
+        th { 
+            text-align: left; padding: 18px 24px; color: var(--text-muted); 
+            font-size: 11px; text-transform: uppercase; font-weight: 700; 
+            border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2);
+        }
+        
+        td { 
+            padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.02); 
+            font-size: 14px; color: var(--text-main); vertical-align: middle;
+            transition: background-color 0.2s;
+        }
+        
+        /* Table Row Glow Hover */
+        tr { transition: 0.2s; border-left: 3px solid transparent; }
+        tr:hover { 
+            background: rgba(59, 130, 246, 0.05) !important; 
+            border-left: 3px solid var(--primary);
+        }
+        tr:last-child td { border-bottom: none; }
+
+        /* STATUS BADGES */
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+        .status-safe { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+        .status-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+        .status-warning { background: rgba(245, 158, 11, 0.15); color: var(--warning); }
+
+        /* ACTION BUTTON */
+        .btn-icon { 
+            color: var(--text-muted); width: 32px; height: 32px; 
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; background: transparent; border: 1px solid var(--border); 
+            text-decoration: none;
+        }
+        .btn-icon:hover { 
+            background: var(--primary); color: #fff; border-color: var(--primary); 
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); /* Glow on hover */
+            transform: scale(1.1);
+        }
+
+        .text-truncate { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area"><i class="fas fa-shield-dog" style="color:var(--primary);"></i> VeriScope AI</div>
+        <nav class="nav-menu">
+            <div class="nav-label">MAIN MENU</div>
+            <a href="/dashboard" class="nav-link"><i class="fas fa-grid-2"></i> Dashboard</a>
+            <a href="/scan" class="nav-link"><i class="fas fa-radar"></i> New Scan</a>
+            <a href="/history" class="nav-link active"><i class="fas fa-history"></i> History Log</a>
+            
+            <div class="nav-label" style="margin-top:24px;">SYSTEM</div>
+            <a href="/settings" class="nav-link"><i class="fas fa-cog"></i> Settings</a>
+            <a href="/logout" class="nav-link" style="color:var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h2>Scan History</h2>
+                <p>Detailed logs of all past security analyses.</p>
+            </div>
+            <div class="user-profile">
+                <div style="text-align: right;">
+                    <div style="font-weight: 600; font-size: 14px;">{{ session.username }}</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">Security Analyst</div>
+                </div>
+                <div style="width:36px;height:36px;background:#3b82f6;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700; box-shadow: 0 0 10px rgba(59,130,246,0.5);">
+                    {{ session.username[0].upper() }}
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>TARGET URL</th>
+                        <th>STATUS</th>
+                        <th>RISK SCORE</th>
+                        <th>DATE & TIME</th>
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for scan in scans %}
+                    <tr>
+                        <td style="color: var(--text-muted); font-family: monospace;">#{{ scan[0] }}</td>
+                        <td>
+                            <div class="text-truncate" title="{{ scan[1] }}">
+                                <span style="color: #3b82f6; margin-right: 6px;"><i class="fas fa-link"></i></span> 
+                                {{ scan[1] }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if scan[2] == 'SAFE' %}
+                                <span class="status-badge status-safe"><i class="fas fa-check-circle"></i> SAFE</span>
+                            {% elif scan[2] == 'PHISHING' %}
+                                <span class="status-badge status-danger"><i class="fas fa-bug"></i> PHISHING</span>
+                            {% else %}
+                                <span class="status-badge status-warning"><i class="fas fa-exclamation-triangle"></i> SUSPICIOUS</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 60px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;">
+                                    <div style="width: {{ scan[3] }}%; height: 100%; border-radius: 2px;
+                                        background: {% if scan[3] > 70 %}var(--danger){% elif scan[3] > 40 %}var(--warning){% else %}var(--success){% endif %};
+                                        box-shadow: 0 0 5px {% if scan[3] > 70 %}var(--danger){% elif scan[3] > 40 %}var(--warning){% else %}var(--success){% endif %};">
+                                    </div>
+                                </div>
+                                <span style="font-weight: 700; font-size: 13px; color: {% if scan[3] > 70 %}var(--danger){% elif scan[3] > 40 %}var(--warning){% else %}var(--success){% endif %};">
+                                    {{ scan[3] }}
+                                </span>
+                            </div>
+                        </td>
+                        <td style="color: var(--text-muted);">{{ scan[4] }}</td>
+                        <td>
+                            <a href="/download_enhanced_report/{{ scan[0] }}" target="_blank" class="btn-icon" title="Download PDF Report">
+                                <i class="fas fa-download"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No scan history found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>

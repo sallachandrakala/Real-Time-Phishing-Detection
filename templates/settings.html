@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - VeriScope AI</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        :root {
+            /* VeriScope Dark Theme Palette */
+            --bg-body: #0b1120;       /* Deepest Blue */
+            --bg-sidebar: #0f172a;    /* Slate Blue */
+            --bg-card: #1e293b;       /* Card Background */
+            --bg-hover: #334155;      /* Hover State */
+            
+            --text-primary: #f8fafc;  /* White */
+            --text-secondary: #94a3b8;/* Muted Blue-Grey */
+            
+            --primary: #3b82f6;       /* VeriScope Bright Blue */
+            --primary-hover: #2563eb;
+            --active-nav-bg: rgba(59, 130, 246, 0.15);
+            
+            --border: rgba(255, 255, 255, 0.08);
+            --divider: rgba(255, 255, 255, 0.08);
+            --radius: 16px;           /* Rounded corners matches dashboard */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-primary);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: 256px;
+            background: var(--bg-sidebar);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            padding-top: 10px;
+            z-index: 100;
+        }
+
+        .logo-area {
+            padding: 12px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .logo-area i { color: var(--primary); font-size: 22px; }
+
+        .nav-menu { padding: 0 12px; flex: 1; }
+        
+        .nav-link {
+            display: flex; align-items: center; gap: 18px;
+            padding: 0 24px; height: 48px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 0 24px 24px 0;
+            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+        .nav-link:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); transform: translateX(5px); }
+        
+        /* ADDED: Pulse Animation Keyframes */
+        @keyframes pulse-blue {
+            0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+
+        /* ADDED: Animation to active link */
+        .nav-link.active { 
+            background: var(--active-nav-bg); 
+            color: var(--primary); 
+            border-left: 3px solid var(--primary);
+            animation: pulse-blue 2s infinite; /* Pulse Effect */
+        }
+        
+        .nav-link.active i { color: var(--primary); }
+        .nav-link i { width: 20px; text-align: center; font-size: 18px; }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            margin-left: 256px;
+            padding: 40px;
+            max-width: 1000px;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 40px; padding-top: 10px;
+        }
+        .page-title h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .page-title p { font-size: 14px; color: var(--text-secondary); }
+
+        /* SEARCH BAR */
+        .search-bar {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            max-width: 600px;
+            display: flex; align-items: center; gap: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            border: 1px solid var(--border);
+        }
+        .search-bar:focus-within { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .search-input { background: transparent; border: none; color: #fff; font-size: 15px; width: 100%; outline: none; font-family: inherit; }
+
+        /* --- CARDS --- */
+        .settings-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Card Hover */
+        }
+        
+        .settings-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .card-header { padding: 24px; border-bottom: 1px solid var(--divider); }
+        .card-header h2 { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+        .card-header p { font-size: 14px; color: var(--text-secondary); }
+
+        .setting-row {
+            padding: 20px 24px;
+            border-top: 1px solid var(--divider);
+            display: flex; justify-content: space-between; align-items: center;
+            transition: background 0.1s;
+        }
+        .setting-row:first-of-type { border-top: none; }
+        .setting-row:hover { background: rgba(255,255,255,0.02); }
+
+        .setting-info { max-width: 60%; }
+        .setting-label { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
+        .setting-desc { font-size: 13px; color: var(--text-secondary); }
+
+        /* INPUTS */
+        .g-input {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            width: 250px;
+            outline: none;
+            font-family: inherit;
+            transition: 0.3s;
+        }
+        .g-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+        .g-input:disabled { border: none; padding: 0; color: var(--text-secondary); background: transparent; }
+
+        /* TOGGLE SWITCH */
+        .g-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .g-switch input { opacity: 0; width: 0; height: 0; }
+        .g-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
+        .g-slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #94a3b8; transition: .4s; border-radius: 50%; }
+        input:checked + .g-slider { background-color: rgba(59, 130, 246, 0.3); }
+        input:checked + .g-slider:before { transform: translateX(20px); background-color: var(--primary); }
+
+        /* BUTTONS */
+        .g-btn { background: transparent; color: var(--primary); border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; font-family: inherit; }
+        .g-btn:hover { background: rgba(59, 130, 246, 0.1); border-color: var(--primary); transform: translateY(-2px); }
+        
+        /* PROFILE AVATAR */
+        .avatar {
+            width: 36px; height: 36px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #60a5fa); 
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px; font-weight: 700; cursor: pointer;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); /* Glow */
+            transition: transform 0.2s;
+        }
+        .avatar:hover { transform: scale(1.1); }
+
+        /* --- POPUP (VeriScope Style) --- */
+        .profile-popup {
+            display: none; position: absolute; top: 50px; right: 0; width: 320px;
+            background: #1e293b; border-radius: 20px; padding: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 3000;
+            flex-direction: column; align-items: center; text-align: center;
+            animation: fadeIn 0.2s ease-out;
+        }
+        .p-email { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; font-weight: 500; }
+        .p-avatar-large {
+            width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary), #60a5fa); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 12px;
+        }
+        .p-name { font-size: 18px; color: #fff; margin-bottom: 20px; font-weight: 600; }
+        .p-manage-btn {
+            border: 1px solid var(--text-secondary); border-radius: 100px; padding: 10px 24px;
+            color: var(--primary); text-decoration: none; font-size: 13px; font-weight: 600;
+            margin-bottom: 20px; display: inline-block; transition: background 0.2s;
+        }
+        .p-manage-btn:hover { background: rgba(59, 130, 246, 0.1); }
+        .p-logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 10px; color: #ef4444; text-decoration: none; font-size: 14px; font-weight: 600; width: 100%; transition: background 0.2s; }
+        .p-logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo-area">
+            <i class="fas fa-shield-alt"></i>
+            <span>VeriScope</span>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-link">
+                <i class="fas fa-chart-pie"></i> Dashboard
+            </a>
+            <a href="{{ url_for('scan') }}" class="nav-link">
+                <i class="fas fa-search"></i> New Scan
+            </a>
+            <a href="{{ url_for('history') }}" class="nav-link">
+                <i class="fas fa-history"></i> History
+            </a>
+            <div style="height: 1px; background: var(--divider); margin: 8px 24px;"></div>
+            <a href="{{ url_for('settings') }}" class="nav-link active">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                <i class="fas fa-sign-out-alt"></i> Sign out
+            </a>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <div class="header">
+            <div class="page-title">
+                <h1>Settings</h1>
+                <p>Manage your account and VeriScope preferences</p>
+            </div>
+            
+            <div style="position: relative;">
+                <div class="avatar" onclick="toggleProfile()">
+                    {{ session.username[0].upper() if session.username else 'U' }}
+                </div>
+
+                <div class="profile-popup" id="profilePopup">
+                    <div class="p-email">{{ session.email if session.email else 'user@veriscope.local' }}</div>
+                    <div class="p-avatar-large">{{ session.username[0].upper() if session.username else 'U' }}</div>
+                    <div class="p-name">Hi, {{ session.username }}!</div>
+                    <a href="#" class="p-manage-btn">Manage your Account</a>
+                    <div style="width:100%; height:1px; background:var(--divider); margin-bottom:15px;"></div>
+                    <a href="{{ url_for('logout') }}" class="p-logout-btn"><i class="fas fa-sign-out-alt"></i> Sign out</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" class="search-input" placeholder="Search settings">
+        </div>
+
+        <div class="settings-card">
+            <div class="card-header">
+                <h2>Profile Information</h2>
+                <p>Basic info about your account</p>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Display Name</div>
+                </div>
+                <input type="text" class="g-input" value="{{ session.username }}">
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Email Address</div>
+                    <div class="setting-desc">Used for login and alerts</div>
+                </div>
+                <input type="text" class="g-input" value="{{ session.email }}" disabled>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="card-header">
+                <h2>Security & Notifications</h2>
+                <p>Control threat detection and alerts</p>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Real-time Phishing Protection</div>
+                    <div class="setting-desc">Analyze URLs using advanced heuristics</div>
+                </div>
+                <label class="g-switch">
+                    <input type="checkbox" checked>
+                    <span class="g-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Email Alerts</div>
+                    <div class="setting-desc">Receive emails when high-risk threats are found</div>
+                </div>
+                <label class="g-switch">
+                    <input type="checkbox" checked>
+                    <span class="g-slider"></span>
+                </label>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">API Access</div>
+                    <div class="setting-desc">Enable external tools to use your key</div>
+                </div>
+                <button class="g-btn">Manage Keys</button>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="card-header">
+                <h2>Data Management</h2>
+                <p>Control your scan history</p>
+            </div>
+            <div class="setting-row">
+                <div class="setting-info">
+                    <div class="setting-label">Clear History</div>
+                    <div class="setting-desc">Permanently remove all past scan logs</div>
+                </div>
+                <button class="g-btn" style="color: #ef4444; border-color: #ef4444;">Clear Data</button>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        function toggleProfile() {
+            const popup = document.getElementById('profilePopup');
+            if (popup.style.display === 'flex') {
+                popup.style.display = 'none';
+            } else {
+                popup.style.display = 'flex';
+            }
+        }
+
+        window.onclick = function(event) {
+            const popup = document.getElementById('profilePopup');
+            if (popup && !event.target.closest('.avatar') && !event.target.closest('.profile-popup')) {
+                popup.style.display = "none";
+            }
+        }
+    </script>
+
+</body>
+</html>

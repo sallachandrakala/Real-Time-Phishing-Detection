@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriScope AI | Phishing Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #0f172a;
+            --border: #1e293b;
+            --primary: #3b82f6;
+            --cyan: #06b6d4;
+            --green: #10b981;
+            --text: #f1f5f9;
+            --muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 48px; background: rgba(2,6,23,0.85);
+            backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; width: 100%; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text); text-decoration: none; }
+        .brand i { color: var(--primary); }
+        .nav-right { display: flex; gap: 12px; align-items: center; }
+        .btn-login {
+            text-decoration: none; color: var(--muted); font-weight: 600;
+            padding: 9px 22px; border: 1px solid var(--border); border-radius: 8px;
+            transition: 0.2s; font-size: 14px;
+        }
+        .btn-login:hover { color: var(--text); border-color: var(--primary); }
+        .btn-register {
+            text-decoration: none; background: var(--primary); color: #fff;
+            font-weight: 600; padding: 9px 22px; border-radius: 8px;
+            transition: 0.2s; font-size: 14px;
+        }
+        .btn-register:hover { background: #2563eb; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 100px 24px 60px; text-align: center; position: relative; overflow: hidden;
+        }
+        .glow { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; }
+        .glow-1 { width: 500px; height: 500px; background: rgba(59,130,246,0.12); top: 10%; left: 10%; }
+        .glow-2 { width: 400px; height: 400px; background: rgba(6,182,212,0.10); bottom: 10%; right: 10%; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3);
+            color: #93c5fd; padding: 6px 16px; border-radius: 50px; font-size: 13px;
+            font-weight: 600; margin-bottom: 28px; letter-spacing: 0.5px;
+        }
+        .badge i { font-size: 11px; }
+
+        h1 {
+            font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #93c5fd 50%, #67e8f9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 18px; color: var(--muted); max-width: 580px; line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        /* SCAN BOX */
+        .scan-box {
+            width: 100%; max-width: 680px;
+            background: rgba(15,23,42,0.9); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px; backdrop-filter: blur(12px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+            margin-bottom: 24px;
+        }
+        .scan-box label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .input-row { display: flex; gap: 12px; }
+        .url-input {
+            flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 18px; color: var(--text);
+            font-size: 15px; font-family: inherit; outline: none; transition: 0.2s;
+        }
+        .url-input::placeholder { color: var(--muted); }
+        .url-input:focus { border-color: var(--primary); background: rgba(59,130,246,0.06); }
+        .btn-scan {
+            background: var(--primary); color: #fff; border: none;
+            padding: 14px 28px; border-radius: 12px; font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .btn-scan:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.35); }
+        .hint { margin-top: 14px; font-size: 12px; color: var(--muted); text-align: center; }
+        .hint span { color: #475569; }
+
+        /* FEATURES */
+        .features { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; max-width: 680px; margin-top: 8px; }
+        .feature {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(15,23,42,0.7); border: 1px solid var(--border);
+            padding: 10px 16px; border-radius: 10px; font-size: 13px; color: var(--muted);
+        }
+        .feature i { color: var(--cyan); font-size: 13px; }
+
+        /* Loading spinner */
+        .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .input-row { flex-direction: column; }
+            .navbar { padding: 14px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="brand"><i class="fas fa-shield-alt"></i> VeriScope AI</a>
+    <div style="display:flex; gap:12px; align-items:center; flex-shrink:0;">
+        {% if logged_in %}
+            <a href="/dashboard" style="display:inline-block; text-decoration:none; color:#ffffff; font-weight:600; padding:9px 22px; border:1.5px solid #94a3b8; border-radius:999px; font-size:14px; background:transparent;">Dashboard</a>
+            <a href="/logout" style="display:inline-block; text-decoration:none; background:#ffffff; color:#000000; font-weight:700; padding:9px 22px; border-radius:999px; font-size:14px;">Logout</a>
+        {% else %}
+            <button onclick="openModal()" style="display:inline-block; text-decoration:none; color:#ffffff; font-weight:600; padding:9px 22px; border:1.5px solid #94a3b8; border-radius:999px; font-size:14px; background:transparent; cursor:pointer; font-family:inherit;">Log in</button>
+            <button onclick="openModal()" style="display:inline-block; text-decoration:none; background:#ffffff; color:#000000; font-weight:700; padding:9px 22px; border-radius:999px; font-size:14px; border:none; cursor:pointer; font-family:inherit;">Sign up for free</button>
+        {% endif %}
+    </div>
+</nav>
+
+<main class="hero">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="badge"><i class="fas fa-bolt"></i> Real-Time Phishing Detection</div>
+
+    <h1>Is this website<br>safe to visit?</h1>
+    <p class="subtitle">Paste any URL below. VeriScope instantly analyzes it for phishing, typosquatting, brand impersonation, and more — no account needed.</p>
+
+    <div class="scan-box">
+        <label>Enter a URL to scan</label>
+        <form action="/scan" method="POST" id="scanForm">
+            <div class="input-row">
+                <input
+                    type="text" name="url" class="url-input"
+                    placeholder="e.g. https://paypal-secure-login.xyz or gooogle.com"
+                    autocomplete="off" spellcheck="false" required
+                />
+                <button type="submit" class="btn-scan" id="scanBtn">
+                    <i class="fas fa-search" id="btnIcon"></i>
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btnText">Scan Now</span>
+                </button>
+            </div>
+        </form>
+        <p class="hint" id="scanHint">{% if logged_in %}<span style="color:#10b981">✓ Logged in — unlimited scans</span>{% endif %}</p>
+    </div>
+
+    <div class="features">
+        <div class="feature"><i class="fas fa-bolt"></i> Entropy Analysis</div>
+        <div class="feature"><i class="fas fa-calendar-alt"></i> WHOIS Age Check</div>
+        <div class="feature"><i class="fas fa-clone"></i> Typosquatting Detection</div>
+        <div class="feature"><i class="fas fa-lock"></i> SSL Verification</div>
+        <div class="feature"><i class="fas fa-tag"></i> Brand Impersonation Check</div>
+    </div>
+</main>
+
+<!-- Limit Modal Styles -->
+<style>
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,0.88); backdrop-filter: blur(3px);
+        z-index: 999; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal-box {
+        background: #1a1a1a;
+        border-radius: 18px; padding: 48px 40px 40px;
+        max-width: 460px; width: 100%;
+        box-shadow: 0 40px 120px rgba(0,0,0,0.95);
+        animation: modalIn 0.22s ease;
+        position: relative; text-align: center;
+    }
+    @keyframes modalIn {
+        from { opacity: 0; transform: scale(0.95) translateY(12px); }
+        to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .modal-close-x {
+        position: absolute; top: 20px; right: 22px;
+        background: none; border: none; color: #888;
+        font-size: 22px; cursor: pointer; line-height: 1;
+        transition: color 0.2s; font-weight: 300; padding: 4px;
+    }
+    .modal-close-x:hover { color: #fff; }
+
+    .modal-box h2 {
+        font-size: 34px; font-weight: 700; color: #fff;
+        margin-bottom: 16px; line-height: 1.15; letter-spacing: -0.5px;
+    }
+    .modal-sub {
+        font-size: 15px; color: #888; line-height: 1.7;
+        margin-bottom: 36px;
+    }
+
+    /* Pill buttons — exactly like the image */
+    .msb {
+        display: flex; align-items: center; justify-content: center; gap: 14px;
+        width: 100%; background: #2a2a2a;
+        border: 1px solid #3d3d3d; border-radius: 50px;
+        padding: 16px 28px; font-size: 16px; font-weight: 600;
+        color: #fff; text-decoration: none; cursor: pointer;
+        transition: background 0.15s; margin-bottom: 14px;
+        font-family: inherit; box-sizing: border-box;
+    }
+    .msb:hover { background: #333; }
+    .msb .msb-icon {
+        width: 24px; height: 24px;
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .modal-divider {
+        display: flex; align-items: center; gap: 16px;
+        margin: 10px 0 22px; color: #555; font-size: 13px;
+        letter-spacing: 1.5px; font-weight: 500;
+    }
+    .modal-divider::before, .modal-divider::after {
+        content: ''; flex: 1; height: 1px; background: #333;
+    }
+
+    .modal-input {
+        width: 100%; background: transparent;
+        border: 1.5px solid #555; border-radius: 50px;
+        padding: 16px 24px; color: #fff; font-size: 16px;
+        font-family: inherit; outline: none; transition: border 0.2s;
+        margin-bottom: 14px; box-sizing: border-box;
+    }
+    .modal-input::placeholder { color: #555; }
+    .modal-input:focus { border-color: #777; }
+
+    .modal-continue-btn {
+        width: 100%; background: #fff; color: #000;
+        border: none; border-radius: 50px; padding: 17px;
+        font-size: 16px; font-weight: 700; cursor: pointer;
+        transition: background 0.15s; font-family: inherit;
+    }
+    .modal-continue-btn:hover { background: #e8e8e8; }
+
+    /* pip counter */
+    .scan-counter-bar {
+        display: flex; align-items: center; justify-content: center;
+        gap: 8px; margin-top: 14px; font-size: 13px; color: var(--muted);
+    }
+    .counter-pip {
+        width: 12px; height: 12px; border-radius: 50%;
+        background: #1e293b; border: 1.5px solid #334155;
+        transition: background 0.4s, box-shadow 0.4s;
+    }
+</style>
+
+<!-- Modal -->
+<div class="modal-overlay" id="limitModal">
+    <div class="modal-box">
+        <button class="modal-close-x" onclick="closeModal()">✕</button>
+
+        <h2>Log in or sign up</h2>
+        <p class="modal-sub">You'll get unlimited scans and can save history, download reports, and more.</p>
+
+        <!-- Continue with Google -->
+        <a href="/login" class="msb">
+            <span class="msb-icon">
+                <svg width="20" height="20" viewBox="0 0 48 48">
+                    <path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85l6.08-6.08C34.46 3.09 29.5 1 24 1 14.82 1 7.07 6.48 3.64 14.22l7.08 5.5C12.43 13.61 17.74 9.5 24 9.5z"/>
+                    <path fill="#4285F4" d="M46.1 24.5c0-1.64-.15-3.22-.42-4.74H24v9h12.42c-.54 2.9-2.18 5.36-4.64 7.02l7.18 5.58C43.18 37.13 46.1 31.27 46.1 24.5z"/>
+                    <path fill="#FBBC05" d="M10.72 28.28A14.6 14.6 0 0 1 9.5 24c0-1.49.26-2.93.72-4.28l-7.08-5.5A23.94 23.94 0 0 0 0 24c0 3.86.92 7.5 2.56 10.72l8.16-6.44z"/>
+                    <path fill="#34A853" d="M24 47c5.5 0 10.12-1.82 13.5-4.94l-7.18-5.58c-1.82 1.22-4.14 1.94-6.32 1.94-6.26 0-11.57-4.11-13.28-9.72l-8.16 6.44C7.07 41.52 14.82 47 24 47z"/>
+                    <path fill="none" d="M0 0h48v48H0z"/>
+                </svg>
+            </span>
+            Continue with Google
+        </a>
+
+        <!-- Continue with Apple -->
+        <a href="/login" class="msb">
+            <span class="msb-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                    <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                </svg>
+            </span>
+            Continue with Apple
+        </a>
+
+        <!-- Continue with phone -->
+        <a href="/login" class="msb">
+            <span class="msb-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+            </span>
+            Continue with phone
+        </a>
+
+        <div class="modal-divider">OR</div>
+
+        <form onsubmit="handleContinue(event)">
+            <input type="email" class="modal-input" id="modalUsername" placeholder="Email address" autocomplete="off"/>
+            <button type="submit" class="modal-continue-btn">Continue</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const MAX_FREE = 3;
+    let count = parseInt(localStorage.getItem('vs_scan_count') || '0');
+
+    // If user is logged in — reset counter and never show modal
+    {% if logged_in %}
+    localStorage.setItem('vs_scan_count', '0');
+    count = 0;
+    {% endif %}
+
+    function renderPips() {
+        const bar = document.getElementById('scanHint');
+        const remaining = MAX_FREE - count;
+
+        // pip colors: 1st used=green, 2nd=yellow, 3rd=red
+        const pipColors = ['#10b981', '#f59e0b', '#ef4444'];
+        let pips = '';
+        for (let i = 0; i < MAX_FREE; i++) {
+            if (i < count) {
+                pips += `<div class="counter-pip" style="background:${pipColors[i]};box-shadow:0 0 6px ${pipColors[i]}88"></div>`;
+            } else {
+                pips += `<div class="counter-pip"></div>`;
+            }
+        }
+
+        if (remaining > 0) {
+            const colors = ['#10b981','#f59e0b','#ef4444'];
+            const textColor = colors[count] || '#ef4444';
+            bar.innerHTML = `<div class="scan-counter-bar">${pips}<span style="margin-left:6px;color:${textColor};font-weight:600">${remaining} free scan${remaining !== 1 ? 's' : ''} left</span></div>`;
+        } else {
+            bar.innerHTML = `<div class="scan-counter-bar">${pips}<span style="margin-left:6px;color:#ef4444;font-weight:600">No scans left — <a href="#" onclick="openModal();return false;" style="color:#60a5fa;text-decoration:underline;">login to continue</a></span></div>`;
+        }
+    }
+
+    renderPips();
+
+    // Auto-show modal if limit already reached when page loads (only for guests)
+    {% if not logged_in %}
+    if (count >= MAX_FREE) {
+        setTimeout(openModal, 400);
+    }
+    {% endif %}
+
+    document.getElementById('scanForm').addEventListener('submit', function(e) {
+        if (count >= MAX_FREE) {
+            e.preventDefault();
+            openModal();
+            return;
+        }
+        count++;
+        localStorage.setItem('vs_scan_count', count);
+        renderPips();
+        // If just hit the limit, show modal after scan completes (on result page return)
+        document.getElementById('btnIcon').style.display = 'none';
+        document.getElementById('spinner').style.display = 'block';
+        document.getElementById('btnText').textContent = 'Scanning...';
+        document.getElementById('scanBtn').disabled = true;
+    });
+
+    function openModal() {
+        document.getElementById('limitModal').classList.add('show');
+    }
+    function closeModal() {
+        document.getElementById('limitModal').classList.remove('show');
+    }
+    document.getElementById('limitModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    function handleContinue(e) {
+        e.preventDefault();
+        const val = document.getElementById('modalUsername').value.trim();
+        window.location.href = val ? '/register?u=' + encodeURIComponent(val) : '/register';
+    }
+</script>
+</body>
+</html>

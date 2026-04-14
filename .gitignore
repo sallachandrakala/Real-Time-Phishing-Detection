@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environment
+Scripts/
+Lib/
+Include/
+pyvenv.cfg
+activate
+activate.bat
+Activate.ps1
+deactivate.bat
+distutils-precedence.pth
+
+# Large binary/wheel files
+*.whl
+*.pyd
+
+# Database (optional - remove if you want to include it)
+veriscope.db
+
+# Model files (large)
+website_status_model.pkl
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
