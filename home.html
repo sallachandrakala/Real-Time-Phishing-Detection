@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriScope AI | Phishing Detection</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #020617;
+            --card: #0f172a;
+            --border: #1e293b;
+            --primary: #3b82f6;
+            --cyan: #06b6d4;
+            --green: #10b981;
+            --text: #f1f5f9;
+            --muted: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 18px 48px; background: rgba(2,6,23,0.85);
+            backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
+            position: fixed; top: 0; width: 100%; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text); text-decoration: none; }
+        .brand i { color: var(--primary); }
+        .nav-right { display: flex; gap: 12px; align-items: center; }
+        .btn-login {
+            text-decoration: none; color: var(--muted); font-weight: 600;
+            padding: 9px 22px; border: 1px solid var(--border); border-radius: 8px;
+            transition: 0.2s; font-size: 14px;
+        }
+        .btn-login:hover { color: var(--text); border-color: var(--primary); }
+        .btn-register {
+            text-decoration: none; background: var(--primary); color: #fff;
+            font-weight: 600; padding: 9px 22px; border-radius: 8px;
+            transition: 0.2s; font-size: 14px;
+        }
+        .btn-register:hover { background: #2563eb; }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 100px 24px 60px; text-align: center; position: relative; overflow: hidden;
+        }
+        .glow { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; }
+        .glow-1 { width: 500px; height: 500px; background: rgba(59,130,246,0.12); top: 10%; left: 10%; }
+        .glow-2 { width: 400px; height: 400px; background: rgba(6,182,212,0.10); bottom: 10%; right: 10%; }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(59,130,246,0.12); border: 1px solid rgba(59,130,246,0.3);
+            color: #93c5fd; padding: 6px 16px; border-radius: 50px; font-size: 13px;
+            font-weight: 600; margin-bottom: 28px; letter-spacing: 0.5px;
+        }
+        .badge i { font-size: 11px; }
+
+        h1 {
+            font-size: clamp(36px, 5vw, 64px); font-weight: 800; line-height: 1.1;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #e2e8f0 0%, #93c5fd 50%, #67e8f9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .subtitle {
+            font-size: 18px; color: var(--muted); max-width: 580px; line-height: 1.7;
+            margin-bottom: 48px;
+        }
+
+        /* SCAN BOX */
+        .scan-box {
+            width: 100%; max-width: 680px;
+            background: rgba(15,23,42,0.9); border: 1px solid var(--border);
+            border-radius: 20px; padding: 32px; backdrop-filter: blur(12px);
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+            margin-bottom: 24px;
+        }
+        .scan-box label {
+            display: block; font-size: 13px; font-weight: 600;
+            color: var(--muted); text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+        .input-row { display: flex; gap: 12px; }
+        .url-input {
+            flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+            border-radius: 12px; padding: 14px 18px; color: var(--text);
+            font-size: 15px; font-family: inherit; outline: none; transition: 0.2s;
+        }
+        .url-input::placeholder { color: var(--muted); }
+        .url-input:focus { border-color: var(--primary); background: rgba(59,130,246,0.06); }
+        .btn-scan {
+            background: var(--primary); color: #fff; border: none;
+            padding: 14px 28px; border-radius: 12px; font-size: 15px;
+            font-weight: 700; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 8px; white-space: nowrap;
+        }
+        .btn-scan:hover { background: #2563eb; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(59,130,246,0.35); }
+        .hint { margin-top: 14px; font-size: 12px; color: var(--muted); text-align: center; }
+        .hint span { color: #475569; }
+
+        /* FEATURES */
+        .features { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; max-width: 680px; margin-top: 8px; }
+        .feature {
+            display: flex; align-items: center; gap: 8px;
+            background: rgba(15,23,42,0.7); border: 1px solid var(--border);
+            padding: 10px 16px; border-radius: 10px; font-size: 13px; color: var(--muted);
+        }
+        .feature i { color: var(--cyan); font-size: 13px; }
+
+        /* Loading spinner */
+        .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 600px) {
+            .input-row { flex-direction: column; }
+            .navbar { padding: 14px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="brand"><i class="fas fa-shield-alt"></i> VeriScope AI</a>
+    <div style="display:flex; gap:12px; align-items:center; flex-shrink:0;">
+        <a href="/login" style="display:inline-block; text-decoration:none; color:#ffffff; font-weight:600; padding:9px 22px; border:1.5px solid #94a3b8; border-radius:999px; font-size:14px; background:transparent;">Log in</a>
+        <a href="/register" style="display:inline-block; text-decoration:none; background:#ffffff; color:#000000; font-weight:700; padding:9px 22px; border-radius:999px; font-size:14px;">Sign up for free</a>
+    </div>
+</nav>
+
+<main class="hero">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="badge"><i class="fas fa-bolt"></i> Real-Time Phishing Detection</div>
+
+    <h1>Is this website<br>safe to visit?</h1>
+    <p class="subtitle">Paste any URL below. VeriScope instantly analyzes it for phishing, typosquatting, brand impersonation, and more — no account needed.</p>
+
+    <div class="scan-box">
+        <label>Enter a URL to scan</label>
+        <form action="/scan" method="POST" id="scanForm">
+            <div class="input-row">
+                <input
+                    type="text" name="url" class="url-input"
+                    placeholder="e.g. https://paypal-secure-login.xyz or gooogle.com"
+                    autocomplete="off" spellcheck="false" required
+                />
+                <button type="submit" class="btn-scan" id="scanBtn">
+                    <i class="fas fa-search" id="btnIcon"></i>
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btnText">Scan Now</span>
+                </button>
+            </div>
+        </form>
+        <p class="hint">No account required &nbsp;·&nbsp; <span>Login to save history & download reports</span></p>
+    </div>
+
+    <div class="features">
+        <div class="feature"><i class="fas fa-bolt"></i> Entropy Analysis</div>
+        <div class="feature"><i class="fas fa-calendar-alt"></i> WHOIS Age Check</div>
+        <div class="feature"><i class="fas fa-clone"></i> Typosquatting Detection</div>
+        <div class="feature"><i class="fas fa-lock"></i> SSL Verification</div>
+        <div class="feature"><i class="fas fa-tag"></i> Brand Impersonation Check</div>
+    </div>
+</main>
+
+<script>
+    document.getElementById('scanForm').addEventListener('submit', function() {
+        document.getElementById('btnIcon').style.display = 'none';
+        document.getElementById('spinner').style.display = 'block';
+        document.getElementById('btnText').textContent = 'Scanning...';
+        document.getElementById('scanBtn').disabled = true;
+    });
+</script>
+</body>
+</html>

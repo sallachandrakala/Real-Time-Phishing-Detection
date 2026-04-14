@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account – VeriScope AI</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg:           #06090f;
+            --panel:        #0d1117;
+            --card:         #161b22;
+            --border:       #21262d;
+            --border-focus: #388bfd;
+            --primary:      #238636;
+            --primary-h:    #2ea043;
+            --text:         #e6edf3;
+            --sub:          #7d8590;
+            --muted:        #484f58;
+            --danger:       #f85149;
+            --success:      #3fb950;
+            --link:         #58a6ff;
+            --warn:         #d29922;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        /* subtle background glow */
+        body::before {
+            content: '';
+            position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+            width: 700px; height: 400px;
+            background: radial-gradient(ellipse, rgba(56,139,253,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .form-card {
+            width: 100%; max-width: 420px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px; padding: 36px 32px;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.55);
+            animation: fadeUp 0.35s ease;
+            position: relative; z-index: 1;
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* logo */
+        .logo {
+            display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 24px;
+        }
+        .logo-icon {
+            width: 46px; height: 46px;
+            background: linear-gradient(135deg, #238636, #388bfd);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #fff; margin-bottom: 12px;
+        }
+        .logo h1 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .logo p  { font-size: 13px; color: var(--sub); }
+
+        /* alerts */
+        .alert {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 11px 13px; border-radius: 8px;
+            font-size: 13px; line-height: 1.5; margin-bottom: 18px;
+        }
+        .alert i { margin-top: 1px; flex-shrink: 0; }
+        .alert-error   { background: rgba(248,81,73,0.1);  border: 1px solid rgba(248,81,73,0.3);  color: #ffa198; }
+        .alert-success { background: rgba(63,185,80,0.1);  border: 1px solid rgba(63,185,80,0.3);  color: #7ee787; }
+
+        /* fields */
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 13px; font-weight: 500; color: var(--sub); margin-bottom: 6px; }
+        .input-wrap { position: relative; }
+        .input-wrap i.icon {
+            position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+            color: var(--muted); font-size: 13px; pointer-events: none;
+        }
+        .field input {
+            width: 100%; padding: 10px 36px 10px 36px;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text);
+            font-size: 14px; font-family: inherit;
+            outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .field input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(56,139,253,0.15);
+        }
+        .field input.valid   { border-color: rgba(63,185,80,0.5); }
+        .field input.invalid { border-color: rgba(248,81,73,0.5); }
+        .field input::placeholder { color: var(--muted); }
+
+        .toggle-pw {
+            position: absolute; right: 11px; top: 50%; transform: translateY(-50%);
+            color: var(--muted); cursor: pointer; font-size: 13px; transition: color 0.15s;
+        }
+        .toggle-pw:hover { color: var(--sub); }
+
+        .field-hint { font-size: 12px; margin-top: 5px; min-height: 15px; }
+        .field-hint.ok   { color: var(--success); }
+        .field-hint.bad  { color: var(--danger); }
+
+        /* strength bar */
+        .strength-bar { height: 4px; border-radius: 2px; background: var(--border); margin-top: 8px; overflow: hidden; }
+        .strength-fill { height: 100%; border-radius: 2px; width: 0; transition: width 0.3s, background 0.3s; }
+        .strength-label { font-size: 11px; color: var(--sub); margin-top: 4px; }
+
+        /* criteria grid */
+        .criteria {
+            background: var(--panel); border: 1px solid var(--border);
+            border-radius: 8px; padding: 12px 14px; margin-top: 8px;
+            display: none; grid-template-columns: 1fr 1fr; gap: 6px 16px;
+        }
+        .criteria.show { display: grid; }
+        .criterion { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); transition: color 0.2s; }
+        .criterion i { font-size: 10px; width: 12px; }
+        .criterion.met   { color: var(--success); }
+        .criterion.unmet { color: var(--muted); }
+
+        /* submit */
+        .btn-submit {
+            width: 100%; padding: 11px;
+            background: var(--primary); color: #fff;
+            border: none; border-radius: 8px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            font-family: inherit; transition: background 0.15s, opacity 0.2s, transform 0.1s;
+            margin-top: 8px;
+        }
+        .btn-submit:not(:disabled):hover  { background: var(--primary-h); }
+        .btn-submit:not(:disabled):active { transform: scale(0.99); }
+        .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .form-footer { text-align: center; margin-top: 20px; font-size: 13px; color: var(--sub); }
+        .form-footer a { color: var(--link); text-decoration: none; font-weight: 500; }
+        .form-footer a:hover { text-decoration: underline; }
+
+        .scan-note {
+            margin-top: 14px; padding: 10px 14px;
+            background: rgba(56,139,253,0.05); border: 1px solid rgba(56,139,253,0.15);
+            border-radius: 8px; font-size: 12px; color: var(--sub); text-align: center;
+        }
+        .scan-note a { color: var(--link); text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<div class="form-card">
+    <div class="logo">
+        <div class="logo-icon"><i class="fas fa-shield-alt"></i></div>
+        <h1>Create your account</h1>
+        <p>Free forever · No credit card required</p>
+    </div>
+
+    {% if error %}
+    <div class="alert alert-error"><i class="fas fa-exclamation-circle"></i><span>{{ error }}</span></div>
+    {% endif %}
+
+    <form method="POST" action="/register" id="regForm" novalidate autocomplete="off">
+
+        <div class="field">
+            <label for="username">Username</label>
+            <div class="input-wrap">
+                <i class="fas fa-user icon"></i>
+                <input type="text" id="username" name="username"
+                       placeholder="Choose a username" required autocomplete="off">
+            </div>
+            <div class="field-hint" id="uname-hint"></div>
+        </div>
+
+        <div class="field">
+            <label for="password">Password</label>
+            <div class="input-wrap">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" id="password" name="password"
+                       placeholder="Create a strong password" required autocomplete="new-password">
+                <i class="fas fa-eye toggle-pw" id="togglePw1"></i>
+            </div>
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            <div class="strength-label" id="strengthLabel"></div>
+            <div class="criteria" id="criteriaGrid">
+                <div class="criterion unmet" id="c-len"><i class="fas fa-circle"></i> 8+ characters</div>
+                <div class="criterion unmet" id="c-up"><i class="fas fa-circle"></i> Uppercase (A–Z)</div>
+                <div class="criterion unmet" id="c-lo"><i class="fas fa-circle"></i> Lowercase (a–z)</div>
+                <div class="criterion unmet" id="c-num"><i class="fas fa-circle"></i> Number (0–9)</div>
+                <div class="criterion unmet" id="c-sp"><i class="fas fa-circle"></i> Special char</div>
+            </div>
+        </div>
+
+        <div class="field">
+            <label for="confirm">Confirm Password</label>
+            <div class="input-wrap">
+                <i class="fas fa-lock icon"></i>
+                <input type="password" id="confirm"
+                       placeholder="Repeat your password" required autocomplete="new-password">
+                <i class="fas fa-eye toggle-pw" id="togglePw2"></i>
+            </div>
+            <div class="field-hint" id="confirm-hint"></div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn" disabled>
+            <i class="fas fa-user-plus" style="margin-right:7px"></i>Create Account
+        </button>
+    </form>
+
+    <div class="form-footer">Already have an account? <a href="/login">Sign in</a></div>
+
+    <div class="scan-note">
+        <i class="fas fa-bolt" style="color:var(--link);margin-right:4px"></i>
+        No account needed to scan — <a href="/">scan directly →</a>
+    </div>
+</div>
+
+<script>
+    // Password toggles
+    function pwToggle(btnId, inputId) {
+        document.getElementById(btnId).addEventListener('click', function() {
+            const inp = document.getElementById(inputId);
+            const hidden = inp.type === 'password';
+            inp.type = hidden ? 'text' : 'password';
+            this.classList.toggle('fa-eye', !hidden);
+            this.classList.toggle('fa-eye-slash', hidden);
+        });
+    }
+    pwToggle('togglePw1','password');
+    pwToggle('togglePw2','confirm');
+
+    // Username live validation
+    const unameInput = document.getElementById('username');
+    const unameHint  = document.getElementById('uname-hint');
+    unameInput.addEventListener('input', function() {
+        const v = this.value.trim();
+        if (!v) { setHint(unameHint,'',''); setInputState(this,''); }
+        else if (v.length < 3) { setHint(unameHint,'bad','Min 3 characters required'); setInputState(this,'invalid'); }
+        else if (/\s/.test(v)) { setHint(unameHint,'bad','No spaces allowed');         setInputState(this,'invalid'); }
+        else                   { setHint(unameHint,'ok','');                            setInputState(this,'valid'); }
+        checkForm();
+    });
+
+    function setHint(el, cls, msg) { el.textContent = msg; el.className = 'field-hint' + (cls ? ' '+cls : ''); }
+    function setInputState(el, cls) { el.classList.remove('valid','invalid'); if(cls) el.classList.add(cls); }
+
+    // Password strength
+    const pwInput       = document.getElementById('password');
+    const confirmInput  = document.getElementById('confirm');
+    const strengthFill  = document.getElementById('strengthFill');
+    const strengthLabel = document.getElementById('strengthLabel');
+    const criteriaGrid  = document.getElementById('criteriaGrid');
+    const confirmHint   = document.getElementById('confirm-hint');
+    const submitBtn     = document.getElementById('submitBtn');
+
+    const rules = {
+        'c-len': v => v.length >= 8,
+        'c-up':  v => /[A-Z]/.test(v),
+        'c-lo':  v => /[a-z]/.test(v),
+        'c-num': v => /[0-9]/.test(v),
+        'c-sp':  v => /[^A-Za-z0-9]/.test(v),
+    };
+    const levels = [
+        {color:'#f85149',label:'Too weak',  w:'20%'},
+        {color:'#d29922',label:'Weak',      w:'40%'},
+        {color:'#d29922',label:'Fair',      w:'60%'},
+        {color:'#3fb950',label:'Good',      w:'80%'},
+        {color:'#3fb950',label:'Strong ✓',  w:'100%'},
+    ];
+
+    pwInput.addEventListener('input', function() {
+        const v = this.value;
+        if (v.length > 0) criteriaGrid.classList.add('show');
+        let passed = 0;
+        for (const [id,fn] of Object.entries(rules)) {
+            const el = document.getElementById(id);
+            const ok = fn(v);
+            el.className = 'criterion ' + (ok ? 'met' : 'unmet');
+            el.querySelector('i').className = 'fas ' + (ok ? 'fa-check-circle' : 'fa-circle');
+            if (ok) passed++;
+        }
+        const lv = levels[Math.max(0, passed-1)];
+        strengthFill.style.width      = passed === 0 ? '0' : lv.w;
+        strengthFill.style.background = lv.color;
+        strengthLabel.textContent     = passed === 0 ? '' : lv.label;
+        strengthLabel.style.color     = lv.color;
+        validateConfirm(); checkForm();
+    });
+
+    confirmInput.addEventListener('input', function() { validateConfirm(); checkForm(); });
+
+    function validateConfirm() {
+        const ok = pwInput.value === confirmInput.value && confirmInput.value.length > 0;
+        if (!confirmInput.value) { setHint(confirmHint,'',''); setInputState(confirmInput,''); return; }
+        setHint(confirmHint, ok?'ok':'bad', ok?'✓ Passwords match':'✕ Passwords do not match');
+        setInputState(confirmInput, ok?'valid':'invalid');
+    }
+
+    function allMet(v) { return Object.values(rules).every(fn => fn(v)); }
+    function checkForm() {
+        const u = unameInput.value.trim();
+        submitBtn.disabled = !(u.length >= 3 && !/\s/.test(u) && allMet(pwInput.value) && pwInput.value === confirmInput.value && confirmInput.value.length > 0);
+    }
+
+    document.getElementById('regForm').addEventListener('submit', function(e) {
+        if (pwInput.value !== confirmInput.value) {
+            e.preventDefault();
+            setHint(confirmHint,'bad','✕ Passwords do not match');
+        }
+    });
+</script>
+</body>
+</html>
