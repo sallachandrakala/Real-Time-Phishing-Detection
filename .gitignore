@@ -37,5 +37,6 @@ website_status_model.pkl
 .DS_Store
 Thumbs.db
 
-# Logs
-*.log
+# Executables & C headers (venv binaries)
+*.exe
+*.h
