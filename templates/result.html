@@ -190,7 +190,36 @@
         {% if session.get('user') %}
             <a href="/dashboard">Dashboard</a>
             <a href="/history">History</a>
-            <a href="/logout">Logout</a>
+            <div style="position:relative;display:inline-block;">
+                <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='block'?'none':'block'"
+                    style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:6px 12px;border-radius:50px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);">
+                    <div style="width:28px;height:28px;border-radius:50%;background:#3b82f6;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;">
+                        {{ session.username[0].upper() }}
+                    </div>
+                    <span style="font-size:13px;color:#94a3b8;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        {{ session.email if session.email else session.username }}
+                    </span>
+                    <i class="fas fa-chevron-down" style="font-size:10px;color:#64748b;"></i>
+                </div>
+                <div style="display:none;position:absolute;right:0;top:48px;background:#1e293b;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:16px;min-width:220px;box-shadow:0 20px 40px rgba(0,0,0,0.5);z-index:999;">
+                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.06);">
+                        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#60a5fa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0;">
+                            {{ session.username[0].upper() }}
+                        </div>
+                        <div>
+                            <div style="font-size:14px;font-weight:600;color:#f1f5f9;">{{ session.username }}</div>
+                            <div style="font-size:12px;color:#64748b;word-break:break-all;">{{ session.email if session.email else session.username }}</div>
+                        </div>
+                    </div>
+                    <a href="/dashboard" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;color:#94a3b8;text-decoration:none;font-size:13px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='none'">
+                        <i class="fas fa-grid-2" style="width:16px;"></i> Dashboard
+                    </a>
+                    <div style="height:1px;background:rgba(255,255,255,0.06);margin:10px 0;"></div>
+                    <a href="/logout" style="display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;color:#ef4444;text-decoration:none;font-size:13px;" onmouseover="this.style.background='rgba(239,68,68,0.08)'" onmouseout="this.style.background='none'">
+                        <i class="fas fa-sign-out-alt" style="width:16px;"></i> Sign out
+                    </a>
+                </div>
+            </div>
         {% endif %}
     </div>
 </nav>

@@ -265,12 +265,114 @@ def create_result_fast(status, msg, domain, reg_year, ip, web_status, suggestion
             'website_status':web_status,'threat_score':score,'suggestion':suggestion}
 
 
+from authlib.integrations.flask_client import OAuth
+
+# ── OAUTH SETUP ───────────────────────────────────────────────────────────────
+# To enable real Google login:
+# 1. Go to https://console.cloud.google.com/
+# 2. Create a project → APIs & Services → Credentials → OAuth 2.0 Client ID
+# 3. Set redirect URI: http://localhost:3000/auth/google/callback
+# 4. Paste your Client ID and Secret below
+
+GOOGLE_CLIENT_ID     = "YOUR_GOOGLE_CLIENT_ID"
+GOOGLE_CLIENT_SECRET = "YOUR_GOOGLE_CLIENT_SECRET"
+
+oauth = OAuth(app)
+google = oauth.register(
+    name='google',
+    client_id=GOOGLE_CLIENT_ID,
+    client_secret=GOOGLE_CLIENT_SECRET,
+    server_metadata_url='https://accounts.google.com/.well-known/openid-configuration',
+    client_kwargs={'scope': 'openid email profile'},
+)
+
 # ── ROUTES ────────────────────────────────────────────────────────────────────
+
+@app.route("/social-login/<provider>")
+def social_login(provider):
+    if provider not in ['Google', 'Apple', 'Phone']:
+        return redirect('/')
+    prefill = request.args.get('u', '')
+    return render_template("social_login.html", provider=provider, prefill=prefill)
+
+@app.route("/login/google")
+def login_google():
+    if GOOGLE_CLIENT_ID == "YOUR_GOOGLE_CLIENT_ID":
+        # Not configured — fall back to login page with message
+        return render_template("login.html", error="Google login not configured yet. Use email login below.")
+    redirect_uri = "http://localhost:3000/auth/google/callback"
+    return google.authorize_redirect(redirect_uri)
+
+@app.route("/auth/google/callback")
+def google_callback():
+    try:
+        token = google.authorize_access_token()
+        userinfo = token.get('userinfo')
+        email = userinfo.get('email', '').lower()
+        name  = userinfo.get('name', email)
+        if not email:
+            return redirect('/login')
+        conn = sqlite3.connect(DB_NAME); c = conn.cursor()
+        c.execute("SELECT id, username, email FROM users WHERE LOWER(COALESCE(email,''))=? OR LOWER(username)=?", (email, email))
+        user = c.fetchone()
+        if not user:
+            import secrets
+            c.execute("INSERT INTO users (username, password, email) VALUES (?,?,?)", (email, secrets.token_hex(16), email))
+            conn.commit()
+            c.execute("SELECT id, username, email FROM users WHERE username=?", (email,))
+            user = c.fetchone()
+        conn.close()
+        session['user']     = user[1]
+        session['username'] = user[1]
+        session['user_id']  = str(user[0])
+        session['email']    = user[2]
+        return redirect(url_for('scan'))
+    except Exception as e:
+        return render_template("login.html", error=f"Google login failed: {str(e)}")
+
+@app.route("/quick-access", methods=["POST"])
+def quick_access():
+    email = request.form.get("email","").strip().lower()
+    provider = request.form.get("provider","email")
+    if not email or "@" not in email:
+        return redirect("/")
+    conn = sqlite3.connect(DB_NAME); c = conn.cursor()
+    # Check if user exists
+    c.execute("SELECT id, username, email FROM users WHERE LOWER(username)=? OR LOWER(COALESCE(email,''))=?", (email, email))
+    user = c.fetchone()
+    if user:
+        # existing user — log in directly (social login, no password needed)
+        session['user'] = user[1]
+        session['username'] = user[1]
+        session['user_id'] = str(user[0])
+        session['email'] = user[2] if user[2] else user[1]
+        conn.close()
+    else:
+        # new user — auto create account
+        import secrets
+        auto_pass = secrets.token_hex(16)
+        c.execute("INSERT INTO users (username, password, email) VALUES (?,?,?)", (email, auto_pass, email))
+        conn.commit()
+        c.execute("SELECT id, username, email FROM users WHERE username=?", (email,))
+        user = c.fetchone()
+        conn.close()
+        session['user'] = user[1]
+        session['username'] = user[1]
+        session['user_id'] = str(user[0])
+        session['email'] = user[2]
+    return redirect(url_for('scan'))
 
 @app.route("/")
 def home():
     logged_in = 'user' in session
-    return render_template("home.html", logged_in=logged_in)
+    uname = session.get('username', '')
+    uemail = session.get('email', uname)
+    # Extract display name: use part before @ if email, else username
+    if uemail and '@' in uemail:
+        display_name = uemail.split('@')[0].replace('.', ' ').replace('_', ' ').title()
+    else:
+        display_name = uname.title()
+    return render_template("home.html", logged_in=logged_in, uname=uname, uemail=uemail, display_name=display_name)
 
 @app.route('/logout')
 def logout():

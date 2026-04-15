@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign in – {{ provider }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: {% if provider == 'Google' %}'Google Sans', 'Roboto'{% elif provider == 'Apple' %}-apple-system, 'SF Pro Display'{% else %}'Plus Jakarta Sans'{% endif %}, sans-serif;
+            background: {% if provider == 'Google' %}#fff{% elif provider == 'Apple' %}#1c1c1e{% else %}#0a0a0a{% endif %};
+            min-height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px;
+        }
+
+        /* ── GOOGLE STYLE ── */
+        .google-card {
+            background: #fff; border-radius: 28px;
+            padding: 48px 40px 36px; width: 100%; max-width: 400px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.12), 0 8px 40px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .google-logo { margin-bottom: 24px; }
+        .google-card h1 { font-size: 24px; font-weight: 400; color: #202124; margin-bottom: 8px; }
+        .google-card .sub { font-size: 16px; color: #202124; margin-bottom: 28px; }
+        .google-input {
+            width: 100%; border: 1px solid #dadce0; border-radius: 4px;
+            padding: 14px 16px; font-size: 16px; color: #202124;
+            outline: none; transition: border 0.2s; margin-bottom: 6px;
+            font-family: inherit;
+        }
+        .google-input:focus { border-color: #1a73e8; border-width: 2px; }
+        .google-hint { font-size: 12px; color: #5f6368; text-align: left; margin-bottom: 28px; }
+        .google-forgot { font-size: 14px; color: #1a73e8; text-decoration: none; display: block; text-align: left; margin-bottom: 32px; }
+        .google-forgot:hover { text-decoration: underline; }
+        .google-actions { display: flex; justify-content: space-between; align-items: center; }
+        .google-create { font-size: 14px; color: #1a73e8; text-decoration: none; font-weight: 500; }
+        .google-create:hover { text-decoration: underline; }
+        .google-next {
+            background: #1a73e8; color: #fff; border: none;
+            border-radius: 4px; padding: 10px 24px; font-size: 14px;
+            font-weight: 500; cursor: pointer; font-family: inherit;
+            transition: background 0.2s; box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .google-next:hover { background: #1557b0; }
+
+        /* ── APPLE STYLE ── */
+        .apple-card {
+            background: #1c1c1e; border-radius: 18px;
+            padding: 48px 40px 40px; width: 100%; max-width: 380px;
+            text-align: center;
+        }
+        .apple-logo { margin-bottom: 20px; }
+        .apple-card h1 { font-size: 28px; font-weight: 600; color: #fff; margin-bottom: 8px; letter-spacing: -0.5px; }
+        .apple-card .sub { font-size: 15px; color: #98989d; margin-bottom: 32px; line-height: 1.5; }
+        .apple-input {
+            width: 100%; background: #2c2c2e; border: none;
+            border-radius: 10px; padding: 15px 16px; font-size: 16px;
+            color: #fff; outline: none; margin-bottom: 12px;
+            font-family: inherit; transition: background 0.2s;
+        }
+        .apple-input:focus { background: #3a3a3c; }
+        .apple-input::placeholder { color: #636366; }
+        .apple-btn {
+            width: 100%; background: #0a84ff; color: #fff; border: none;
+            border-radius: 12px; padding: 16px; font-size: 17px;
+            font-weight: 600; cursor: pointer; font-family: inherit;
+            transition: background 0.2s; margin-bottom: 16px;
+        }
+        .apple-btn:hover { background: #0070d8; }
+        .apple-link { font-size: 14px; color: #0a84ff; text-decoration: none; }
+        .apple-link:hover { text-decoration: underline; }
+        .apple-terms { font-size: 12px; color: #636366; margin-top: 24px; line-height: 1.6; }
+        .apple-terms a { color: #636366; }
+
+        /* ── PHONE STYLE ── */
+        .phone-card {
+            background: #1a1a1a; border-radius: 20px;
+            padding: 48px 36px 40px; width: 100%; max-width: 380px;
+            text-align: center;
+        }
+        .phone-icon { font-size: 48px; margin-bottom: 20px; }
+        .phone-card h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .phone-card .sub { font-size: 15px; color: #888; margin-bottom: 32px; line-height: 1.6; }
+        .phone-input {
+            width: 100%; background: #2a2a2a; border: 1.5px solid #333;
+            border-radius: 12px; padding: 15px 18px; font-size: 16px;
+            color: #fff; outline: none; margin-bottom: 14px;
+            font-family: inherit; transition: border 0.2s;
+        }
+        .phone-input:focus { border-color: #3b82f6; }
+        .phone-input::placeholder { color: #555; }
+        .phone-btn {
+            width: 100%; background: #fff; color: #000; border: none;
+            border-radius: 50px; padding: 16px; font-size: 16px;
+            font-weight: 700; cursor: pointer; font-family: inherit;
+            transition: background 0.2s;
+        }
+        .phone-btn:hover { background: #e5e5e5; }
+        .back-link {
+            display: inline-block; margin-top: 20px;
+            font-size: 13px; color: #555; text-decoration: none;
+        }
+        .back-link:hover { color: #aaa; }
+
+        .error-msg {
+            background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3);
+            color: #fca5a5; border-radius: 8px; padding: 10px 14px;
+            font-size: 13px; margin-bottom: 16px; text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+{% if provider == 'Google' %}
+<!-- ── GOOGLE UI ── -->
+<div class="google-card">
+    <div class="google-logo">
+        <svg width="75" height="24" viewBox="0 0 75 24">
+            <path d="M29.89 12.27c0-.85-.07-1.67-.2-2.45H15.3v4.63h8.18a6.99 6.99 0 0 1-3.03 4.59v3.82h4.9c2.87-2.64 4.53-6.53 4.53-10.59z" fill="#4285F4"/>
+            <path d="M15.3 23.5c4.1 0 7.54-1.36 10.05-3.68l-4.9-3.82c-1.36.91-3.1 1.45-5.15 1.45-3.96 0-7.31-2.67-8.51-6.26H1.73v3.94A15.18 15.18 0 0 0 15.3 23.5z" fill="#34A853"/>
+            <path d="M6.79 11.19a9.1 9.1 0 0 1 0-5.82V1.43H1.73a15.18 15.18 0 0 0 0 13.7l5.06-3.94z" fill="#FBBC05"/>
+            <path d="M15.3 3.61c2.23 0 4.23.77 5.8 2.27l4.35-4.35A15.1 15.1 0 0 0 15.3.5 15.18 15.18 0 0 0 1.73 8.43l5.06 3.94c1.2-3.59 4.55-6.76 8.51-6.76z" fill="#EA4335"/>
+            <text x="34" y="18" font-family="Product Sans,Arial" font-size="19" fill="#4285F4">G</text>
+            <text x="44" y="18" font-family="Product Sans,Arial" font-size="19" fill="#EA4335">o</text>
+            <text x="54" y="18" font-family="Product Sans,Arial" font-size="19" fill="#FBBC05">o</text>
+            <text x="63" y="18" font-family="Product Sans,Arial" font-size="19" fill="#4285F4">g</text>
+        </svg>
+    </div>
+    <h1>Sign in</h1>
+    <p class="sub">to continue to VeriScope</p>
+
+    {% if error %}<div class="error-msg">⚠ {{ error }}</div>{% endif %}
+
+    <form method="POST" action="/quick-access">
+        <input type="hidden" name="provider" value="Google"/>
+        <input type="email" name="email" class="google-input"
+            placeholder="Email or phone" required autofocus
+            value="{{ prefill or '' }}"/>
+        <p class="google-hint">Not your computer? Use Guest mode to sign in privately.</p>
+        <a href="#" class="google-forgot">Forgot email?</a>
+        <div class="google-actions">
+            <a href="/register" class="google-create">Create account</a>
+            <button type="submit" class="google-next">Next</button>
+        </div>
+    </form>
+</div>
+
+{% elif provider == 'Apple' %}
+<!-- ── APPLE UI ── -->
+<div class="apple-card">
+    <div class="apple-logo">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="#fff">
+            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+        </svg>
+    </div>
+    <h1>Sign in with Apple</h1>
+    <p class="sub">Enter your Apple ID to continue to VeriScope.</p>
+
+    {% if error %}<div class="error-msg" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:16px;">⚠ {{ error }}</div>{% endif %}
+
+    <form method="POST" action="/quick-access">
+        <input type="hidden" name="provider" value="Apple"/>
+        <input type="email" name="email" class="apple-input"
+            placeholder="Apple ID (Email)" required autofocus
+            value="{{ prefill or '' }}"/>
+        <button type="submit" class="apple-btn">Continue →</button>
+        <a href="/register" class="apple-link">Create Apple ID</a>
+    </form>
+    <p class="apple-terms">By continuing, you agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.</p>
+</div>
+
+{% else %}
+<!-- ── PHONE UI ── -->
+<div class="phone-card">
+    <div class="phone-icon">📱</div>
+    <h1>Continue with phone</h1>
+    <p class="sub">Enter your email address to get instant access to VeriScope.</p>
+
+    {% if error %}<div class="error-msg">⚠ {{ error }}</div>{% endif %}
+
+    <form method="POST" action="/quick-access">
+        <input type="hidden" name="provider" value="Phone"/>
+        <input type="email" name="email" class="phone-input"
+            placeholder="Email address" required autofocus
+            value="{{ prefill or '' }}"/>
+        <button type="submit" class="phone-btn">Get Access</button>
+    </form>
+    <a href="/" class="back-link">← Back to scanner</a>
+</div>
+{% endif %}
+
+</body>
+</html>

@@ -9,44 +9,38 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #0a0a0a;
-            color: #ececec;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
+            background: #0a0a0a; color: #fff;
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 24px;
         }
 
         .logo {
             display: flex; align-items: center; gap: 10px;
             font-size: 22px; font-weight: 700; color: #fff;
-            margin-bottom: 32px; text-decoration: none;
+            margin-bottom: 36px; text-decoration: none;
         }
         .logo-icon {
             width: 40px; height: 40px; background: #3b82f6;
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            font-size: 18px;
+            border-radius: 10px; display: flex; align-items: center;
+            justify-content: center; font-size: 18px;
         }
 
         .card {
-            background: #141414;
-            border: 1px solid #2a2a2a;
-            border-radius: 16px;
-            padding: 36px 40px;
-            width: 100%;
-            max-width: 400px;
+            background: #141414; border: 1px solid #222;
+            border-radius: 18px; padding: 40px 36px;
+            width: 100%; max-width: 400px;
         }
 
         .card h1 {
-            font-size: 24px; font-weight: 700; color: #fff;
-            margin-bottom: 6px; text-align: center;
+            font-size: 28px; font-weight: 700; color: #fff;
+            margin-bottom: 10px; text-align: center; letter-spacing: -0.5px;
         }
         .card .sub {
-            font-size: 14px; color: #666; text-align: center; margin-bottom: 28px;
+            font-size: 15px; color: #888; text-align: center;
+            margin-bottom: 32px; line-height: 1.6;
         }
 
+        /* Alert */
         .alert {
             padding: 12px 14px; border-radius: 10px; font-size: 13px;
             margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
@@ -54,49 +48,51 @@
         .alert-error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.25); color: #fca5a5; }
         .alert-success { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
 
-        .field { margin-bottom: 16px; }
-        .field label {
-            display: block; font-size: 13px; font-weight: 600;
-            color: #aaa; margin-bottom: 7px;
+        /* Social buttons */
+        .social-btn {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            width: 100%; background: #1e1e1e; border: 1px solid #2e2e2e;
+            border-radius: 50px; padding: 14px 20px;
+            font-size: 15px; font-weight: 600; color: #fff;
+            text-decoration: none; cursor: pointer;
+            transition: background 0.15s; margin-bottom: 12px;
+            font-family: inherit;
         }
+        .social-btn:hover { background: #2a2a2a; border-color: #3a3a3a; }
+        .social-btn .icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+        /* Divider */
+        .divider {
+            display: flex; align-items: center; gap: 14px;
+            margin: 8px 0 20px; color: #444; font-size: 13px; letter-spacing: 1px;
+        }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #2a2a2a; }
+
+        /* Email form */
+        .field { margin-bottom: 14px; }
+        .field label { display: block; font-size: 13px; font-weight: 600; color: #888; margin-bottom: 7px; }
         .field input {
             width: 100%; background: #1e1e1e; border: 1px solid #2e2e2e;
-            border-radius: 10px; padding: 13px 16px; color: #fff;
+            border-radius: 50px; padding: 14px 20px; color: #fff;
             font-size: 15px; font-family: inherit; outline: none; transition: 0.2s;
         }
-        .field input::placeholder { color: #444; }
-        .field input:focus { border-color: #3b82f6; background: #1a1a2e; }
+        .field input::placeholder { color: #555; }
+        .field input:focus { border-color: #555; background: #252525; }
 
         .btn-submit {
-            width: 100%; background: #fff; color: #000;
-            border: none; border-radius: 10px; padding: 14px;
-            font-size: 15px; font-weight: 700; cursor: pointer;
-            transition: 0.2s; margin-top: 6px; font-family: inherit;
+            width: 100%; background: #fff; color: #000; border: none;
+            border-radius: 50px; padding: 15px; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: 0.2s; font-family: inherit; margin-top: 4px;
         }
         .btn-submit:hover { background: #e5e5e5; }
 
-        .divider {
-            display: flex; align-items: center; gap: 12px;
-            margin: 22px 0; color: #333; font-size: 13px;
-        }
-        .divider::before, .divider::after {
-            content: ''; flex: 1; height: 1px; background: #2a2a2a;
-        }
-
-        .footer-link {
-            text-align: center; font-size: 14px; color: #666; margin-top: 24px;
-        }
-        .footer-link a { color: #3b82f6; text-decoration: none; font-weight: 600; }
+        .footer-link { text-align: center; font-size: 14px; color: #666; margin-top: 24px; }
+        .footer-link a { color: #fff; text-decoration: none; font-weight: 600; }
         .footer-link a:hover { text-decoration: underline; }
 
-        .back-link {
-            text-align: center; margin-top: 20px;
-        }
-        .back-link a {
-            color: #555; font-size: 13px; text-decoration: none;
-            display: inline-flex; align-items: center; gap: 6px;
-        }
-        .back-link a:hover { color: #aaa; }
+        .back-link { text-align: center; margin-top: 20px; }
+        .back-link a { color: #444; font-size: 13px; text-decoration: none; }
+        .back-link a:hover { color: #888; }
     </style>
 </head>
 <body>
@@ -108,7 +104,7 @@
 
 <div class="card">
     <h1>Welcome back</h1>
-    <p class="sub">Log in to your VeriScope account</p>
+    <p class="sub">Log in to continue to VeriScope</p>
 
     {% if error %}
     <div class="alert alert-error">⚠️ {{ error }}</div>
@@ -117,22 +113,56 @@
     <div class="alert alert-success">✅ {{ success }}</div>
     {% endif %}
 
+    <!-- Continue with Google -->
+    <a href="/login/google" class="social-btn">
+        <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 48 48">
+                <path fill="#EA4335" d="M24 9.5c3.14 0 5.95 1.08 8.17 2.85l6.08-6.08C34.46 3.09 29.5 1 24 1 14.82 1 7.07 6.48 3.64 14.22l7.08 5.5C12.43 13.61 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.1 24.5c0-1.64-.15-3.22-.42-4.74H24v9h12.42c-.54 2.9-2.18 5.36-4.64 7.02l7.18 5.58C43.18 37.13 46.1 31.27 46.1 24.5z"/>
+                <path fill="#FBBC05" d="M10.72 28.28A14.6 14.6 0 0 1 9.5 24c0-1.49.26-2.93.72-4.28l-7.08-5.5A23.94 23.94 0 0 0 0 24c0 3.86.92 7.5 2.56 10.72l8.16-6.44z"/>
+                <path fill="#34A853" d="M24 47c5.5 0 10.12-1.82 13.5-4.94l-7.18-5.58c-1.82 1.22-4.14 1.94-6.32 1.94-6.26 0-11.57-4.11-13.28-9.72l-8.16 6.44C7.07 41.52 14.82 47 24 47z"/>
+            </svg>
+        </span>
+        Continue with Google
+    </a>
+
+    <!-- Continue with Apple -->
+    <a href="/social-login/Apple" class="social-btn">
+        <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff">
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.37 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+            </svg>
+        </span>
+        Continue with Apple
+    </a>
+
+    <!-- Continue with phone -->
+    <a href="/social-login/Phone" class="social-btn">
+        <span class="icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.91a16 16 0 0 0 6 6l.91-.91a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+        </span>
+        Continue with phone number
+    </a>
+
+    <div class="divider">OR</div>
+
+    <!-- Email + Password login -->
     <form method="POST" action="/login">
         <div class="field">
-            <label>Email address</label>
-            <input type="email" name="username" placeholder="you@example.com" required autofocus id="usernameField" />
+            <input type="email" name="username" id="usernameField"
+                placeholder="Email address" required autocomplete="email"/>
         </div>
         <div class="field">
-            <label>Password</label>
-            <input type="password" name="password" placeholder="Enter your password" required />
+            <input type="password" name="password"
+                placeholder="Password" required/>
         </div>
-        <button type="submit" class="btn-submit">Log in</button>
+        <button type="submit" class="btn-submit">Continue</button>
     </form>
 
-    <div class="divider">or</div>
-
-    <div class="footer-link">
-        Don't have an account? <a href="/register">Sign up for free</a>
+    <div class="footer-link" style="margin-top:20px;">
+        Don't have an account? <a href="/register">Sign up</a>
     </div>
 </div>
 
@@ -140,13 +170,12 @@
     <a href="/">← Back to scanner</a>
 </div>
 
-</body>
-</html>
 <script>
     const p = new URLSearchParams(window.location.search);
     if (p.get('u')) {
         const f = document.getElementById('usernameField');
-        f.value = p.get('u');
-        f.focus();
+        if(f) { f.value = p.get('u'); f.focus(); }
     }
 </script>
+</body>
+</html>
