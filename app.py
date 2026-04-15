@@ -16,7 +16,11 @@ from fpdf import FPDF
 # Google OAuth imports REMOVED permanently
 
 app = Flask(__name__)
-app.secret_key = 'veriscope_key_master'
+app.secret_key = 'veriscope_key_master_2026_fixed'
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_PATH'] = '/'
+app.config['SESSION_COOKIE_HTTPONLY'] = True
 DB_NAME = 'veriscope.db'
 
 def init_db():
@@ -362,22 +366,32 @@ def quick_access():
         session['email'] = user[2]
     return redirect(url_for('scan'))
 
+@app.route("/debug-session")
+def debug_session():
+    return f"user={session.get('user')} | username={session.get('username')} | email={session.get('email')} | logged_in={'user' in session}"
+
 @app.route("/")
 def home():
-    logged_in = 'user' in session
+    logged_in = bool(session.get('user'))
     uname = session.get('username', '')
     uemail = session.get('email', uname)
-    # Extract display name: use part before @ if email, else username
     if uemail and '@' in uemail:
         display_name = uemail.split('@')[0].replace('.', ' ').replace('_', ' ').title()
+    elif uname:
+        display_name = uname.replace('.', ' ').replace('_', ' ').title()
     else:
-        display_name = uname.title()
-    return render_template("home.html", logged_in=logged_in, uname=uname, uemail=uemail, display_name=display_name)
+        display_name = ''
+    return render_template("home.html",
+        logged_in=logged_in,
+        uname=uname,
+        uemail=uemail,
+        display_name=display_name
+    )
 
 @app.route('/logout')
 def logout():
-    session.clear()  # This removes the "abc" user from the session
-    return redirect('/login')
+    session.clear()
+    return redirect('/')
 
 @app.route("/login", methods=["GET","POST"])
 def login():

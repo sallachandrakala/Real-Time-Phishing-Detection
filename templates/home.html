@@ -23,11 +23,12 @@
         /* NAVBAR */
         .navbar {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 18px 48px; background: rgba(2,6,23,0.85);
+            padding: 18px 48px; background: rgba(2,6,23,0.95);
             backdrop-filter: blur(12px); border-bottom: 1px solid var(--border);
-            position: fixed; top: 0; width: 100%; z-index: 100;
+            position: fixed; top: 0; width: 100%; z-index: 200;
+            box-sizing: border-box;
         }
-        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text); text-decoration: none; }
+        .brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text); text-decoration: none; flex-shrink: 0; }
         .brand i { color: var(--primary); }
         .nav-right { display: flex; gap: 12px; align-items: center; }
         .btn-login {
@@ -127,62 +128,55 @@
 <nav class="navbar">
     <a href="/" class="brand"><i class="fas fa-shield-alt"></i> VeriScope AI</a>
     <div style="display:flex; gap:12px; align-items:center; flex-shrink:0;">
-        {% if logged_in %}
 
-        <!-- Profile dropdown -->
+        {% if session.get('user') %}
+        <!-- Profile pill -->
         <div style="position:relative;" id="profileWrap">
-            <!-- Trigger: avatar + email pill -->
             <div onclick="document.getElementById('profileCard').style.display=document.getElementById('profileCard').style.display==='block'?'none':'block'"
                 style="display:flex;align-items:center;gap:9px;cursor:pointer;padding:6px 14px 6px 8px;border-radius:50px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);">
                 <div style="width:30px;height:30px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;">
-                    {{ display_name[0].upper() if display_name else 'U' }}
+                    {{ session.get('email','U')[0].upper() }}
                 </div>
                 <span style="font-size:13px;font-weight:600;color:#e2e8f0;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
-                    {{ display_name if display_name else uemail }}
+                    {% set em = session.get('email','') %}
+                    {% if '@' in em %}{{ em.split('@')[0].replace('.',' ').replace('_',' ').title() }}{% else %}{{ em }}{% endif %}
                 </span>
                 <i class="fas fa-chevron-down" style="font-size:10px;color:#64748b;"></i>
             </div>
-
-            <!-- Profile card dropdown -->
-            <div id="profileCard" style="display:none;position:absolute;right:0;top:52px;background:#2a2118;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:28px 24px 20px;min-width:280px;box-shadow:0 24px 60px rgba(0,0,0,0.7);z-index:9999;text-align:center;">
-                <div style="width:72px;height:72px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:30px;color:#fff;margin:0 auto 14px;">
-                    {{ display_name[0].upper() if display_name else 'U' }}
+            <!-- Dropdown -->
+            <div id="profileCard" style="display:none;position:absolute;right:0;top:52px;background:#1e1e2e;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:24px 20px 16px;min-width:270px;box-shadow:0 24px 60px rgba(0,0,0,0.7);z-index:9999;text-align:center;">
+                <div style="width:68px;height:68px;border-radius:50%;background:#0d9488;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:28px;color:#fff;margin:0 auto 12px;">
+                    {{ session.get('email','U')[0].upper() }}
                 </div>
-                <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:4px;">
-                    {{ display_name }}
+                <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px;">
+                    {% set em = session.get('email','') %}{% if '@' in em %}{{ em.split('@')[0].replace('.',' ').replace('_',' ').title() }}{% else %}{{ em }}{% endif %}
                 </div>
-                <div style="font-size:14px;color:#94a3b8;margin-bottom:20px;word-break:break-all;">
-                    {{ uemail if uemail else uname }}
-                </div>
-                <div style="height:1px;background:rgba(255,255,255,0.08);margin-bottom:14px;"></div>
-                <a href="/dashboard" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                    <i class="fas fa-chart-bar" style="color:#3b82f6;width:16px;"></i> Dashboard
-                </a>
-                <a href="/history" style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:#94a3b8;text-decoration:none;font-size:13px;font-weight:500;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'">
-                    <i class="fas fa-history" style="color:#f59e0b;width:16px;"></i> History
-                </a>
-                <div style="height:1px;background:rgba(255,255,255,0.08);margin:10px 0;"></div>
-                <a href="/logout" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;background:rgba(239,68,68,0.12);color:#ef4444;text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                <div style="font-size:12px;color:#64748b;margin-bottom:16px;word-break:break-all;">{{ session.get('email','') }}</div>
+                <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:12px;"></div>
+                <a href="/scan" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:#94a3b8;text-decoration:none;font-size:13px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="fas fa-search" style="color:#3b82f6;width:16px;"></i> New Scan</a>
+                <a href="/dashboard" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:#94a3b8;text-decoration:none;font-size:13px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="fas fa-chart-bar" style="color:#10b981;width:16px;"></i> Dashboard</a>
+                <a href="/history" style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;color:#94a3b8;text-decoration:none;font-size:13px;" onmouseover="this.style.background='rgba(255,255,255,0.05)'" onmouseout="this.style.background='transparent'"><i class="fas fa-history" style="color:#f59e0b;width:16px;"></i> History</a>
+                <div style="height:1px;background:rgba(255,255,255,0.07);margin:10px 0;"></div>
+                <a href="/logout" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:11px;border-radius:10px;background:rgba(239,68,68,0.12);color:#ef4444;text-decoration:none;font-size:14px;font-weight:600;" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.12)'"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
+        <!-- Visible Logout -->
+        <a href="/logout" style="display:flex;align-items:center;gap:7px;padding:9px 20px;border-radius:999px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.35);color:#ef4444;text-decoration:none;font-size:14px;font-weight:700;">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
 
         {% else %}
         <button onclick="openModal()" style="color:#ffffff;font-weight:600;padding:9px 22px;border:1.5px solid #94a3b8;border-radius:999px;font-size:14px;background:transparent;cursor:pointer;font-family:inherit;">Log in</button>
         <button onclick="openModal()" style="background:#ffffff;color:#000000;font-weight:700;padding:9px 22px;border-radius:999px;font-size:14px;border:none;cursor:pointer;font-family:inherit;">Sign up for free</button>
         {% endif %}
+
     </div>
 </nav>
-
 <script>
-    // Close profile card when clicking outside
     document.addEventListener('click', function(e) {
         const wrap = document.getElementById('profileWrap');
         const card = document.getElementById('profileCard');
-        if (wrap && card && !wrap.contains(e.target)) {
-            card.style.display = 'none';
-        }
+        if (wrap && card && !wrap.contains(e.target)) card.style.display = 'none';
     });
 </script>
 
@@ -200,7 +194,7 @@
         <form action="/scan" method="POST" id="scanForm">
             <div class="input-row">
                 <input
-                    type="text" name="url" class="url-input"
+                    type="text" name="url" class="url-input" id="urlInput"
                     placeholder="e.g. https://paypal-secure-login.xyz or gooogle.com"
                     autocomplete="off" spellcheck="false" required
                 />
@@ -211,7 +205,7 @@
                 </button>
             </div>
         </form>
-        <p class="hint" id="scanHint">{% if logged_in %}<span style="color:#10b981">✓ Logged in — unlimited scans</span>{% endif %}</p>
+        <p class="hint" id="scanHint">{% if session.get('user') %}<span style="color:#10b981">✓ Logged in — unlimited scans</span>{% endif %}</p>
     </div>
 
     <div class="features">
@@ -222,6 +216,81 @@
         <div class="feature"><i class="fas fa-tag"></i> Brand Impersonation Check</div>
     </div>
 </main>
+
+<!-- ── SCANNING OVERLAY ── -->
+<style>
+    .scan-overlay {
+        display: none; position: fixed; inset: 0;
+        background: #020617; z-index: 9999;
+        flex-direction: column; align-items: center; justify-content: center;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .scan-overlay.active { display: flex; }
+
+    .scan-ring {
+        width: 90px; height: 90px; border-radius: 50%;
+        border: 3px solid rgba(59,130,246,0.15);
+        border-top: 3px solid #3b82f6;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 32px; position: relative;
+    }
+    .scan-ring::after {
+        content: ''; position: absolute; inset: 8px;
+        border-radius: 50%; border: 2px solid rgba(6,182,212,0.2);
+        border-top: 2px solid #06b6d4;
+        animation: spin 1.2s linear infinite reverse;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .scan-url-display {
+        font-size: 15px; color: #3b82f6; font-weight: 600;
+        margin-bottom: 28px; max-width: 500px; text-align: center;
+        word-break: break-all; padding: 0 20px;
+    }
+
+    .scan-steps { display: flex; flex-direction: column; gap: 10px; width: 340px; }
+    .scan-step {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 16px; border-radius: 10px;
+        background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+        font-size: 13px; color: #475569; transition: all 0.3s;
+    }
+    .scan-step.active {
+        background: rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.2);
+        color: #93c5fd;
+    }
+    .scan-step.done {
+        background: rgba(16,185,129,0.06); border-color: rgba(16,185,129,0.15);
+        color: #6ee7b7;
+    }
+    .scan-step .step-icon { width: 20px; text-align: center; font-size: 13px; }
+    .scan-step.active .step-icon { color: #3b82f6; }
+    .scan-step.done .step-icon { color: #10b981; }
+
+    .scan-progress-bar {
+        width: 340px; height: 3px; background: rgba(255,255,255,0.06);
+        border-radius: 2px; margin-top: 24px; overflow: hidden;
+    }
+    .scan-progress-fill {
+        height: 100%; background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        border-radius: 2px; width: 0%; transition: width 0.4s ease;
+    }
+</style>
+
+<div class="scan-overlay" id="scanOverlay">
+    <div class="scan-ring"></div>
+    <div class="scan-url-display" id="scanUrlDisplay">Analyzing URL...</div>
+    <div class="scan-steps">
+        <div class="scan-step" id="step1"><span class="step-icon"><i class="fas fa-globe"></i></span> Resolving domain & IP address</div>
+        <div class="scan-step" id="step2"><span class="step-icon"><i class="fas fa-lock"></i></span> Checking SSL certificate</div>
+        <div class="scan-step" id="step3"><span class="step-icon"><i class="fas fa-calendar-alt"></i></span> Looking up domain age (WHOIS)</div>
+        <div class="scan-step" id="step4"><span class="step-icon"><i class="fas fa-shield-alt"></i></span> Running threat analysis</div>
+        <div class="scan-step" id="step5"><span class="step-icon"><i class="fas fa-file-alt"></i></span> Generating report</div>
+    </div>
+    <div class="scan-progress-bar">
+        <div class="scan-progress-fill" id="scanProgress"></div>
+    </div>
+</div>
 
 <!-- Limit Modal Styles -->
 <style>
@@ -384,7 +453,7 @@
     let count = parseInt(localStorage.getItem('vs_scan_count') || '0');
 
     // If user is logged in — reset counter and never show modal
-    {% if logged_in %}
+    {% if session.get('user') %}
     localStorage.setItem('vs_scan_count', '0');
     count = 0;
     {% endif %}
@@ -416,7 +485,7 @@
     renderPips();
 
     // Auto-show modal if limit already reached when page loads (only for guests)
-    {% if not logged_in %}
+    {% if not session.get('user') %}
     if (count >= MAX_FREE) {
         setTimeout(openModal, 400);
     }
@@ -431,7 +500,31 @@
         count++;
         localStorage.setItem('vs_scan_count', count);
         renderPips();
-        // If just hit the limit, show modal after scan completes (on result page return)
+
+        // Show animated scanning overlay
+        const url = document.getElementById('urlInput').value;
+        document.getElementById('scanUrlDisplay').textContent = '🔍 Scanning: ' + url;
+        document.getElementById('scanOverlay').classList.add('active');
+
+        const steps = ['step1','step2','step3','step4','step5'];
+        const progress = document.getElementById('scanProgress');
+        let i = 0;
+        const interval = setInterval(() => {
+            if (i > 0) {
+                document.getElementById(steps[i-1]).classList.remove('active');
+                document.getElementById(steps[i-1]).classList.add('done');
+                document.getElementById(steps[i-1]).querySelector('.step-icon').innerHTML = '<i class="fas fa-check"></i>';
+            }
+            if (i < steps.length) {
+                document.getElementById(steps[i]).classList.add('active');
+                progress.style.width = ((i+1) / steps.length * 85) + '%';
+                i++;
+            } else {
+                clearInterval(interval);
+                progress.style.width = '100%';
+            }
+        }, 500);
+
         document.getElementById('btnIcon').style.display = 'none';
         document.getElementById('spinner').style.display = 'block';
         document.getElementById('btnText').textContent = 'Scanning...';
